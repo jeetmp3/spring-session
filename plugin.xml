@@ -1,6 +1,6 @@
 <plugin name='spring-session' version='0.1' grailsVersion='2.4 &gt; *'>
   <author>Jitendra Singh</author>
-  <authorEmail>jitendra.singh@tothenew.com</authorEmail>
+  <authorEmail>jeet.mp3@gmail.com</authorEmail>
   <title>Spring Session Grails Plugin</title>
   <description>Spring Session Grails Plugin provide support for SpringSession project available in Grails.
 </description>
