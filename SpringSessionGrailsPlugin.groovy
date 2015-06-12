@@ -78,7 +78,7 @@ Spring Session Grails Plugin provide support for SpringSession project available
     }
 
     def doWithSpring = {
-        println "+++++++++ Configuring Spring session"
+        println "++++++ Configuring Spring session"
         mergeConfig(application)
         def conf = application.config.springsession
 
@@ -90,7 +90,7 @@ Spring Session Grails Plugin provide support for SpringSession project available
         redisConnectionFactory(JedisConnectionFactory) {
             hostName = conf.redis.connectionFactory.hostName ?: "localhost"
             port = conf.redis.connectionFactory.port ?: 6379
-            timeout = conf.redis.connectionFactory.timeout
+            timeout = conf.redis.connectionFactory.timeout ?: 2000
             usePool = conf.redis.connectionFactory.usePool
             convertPipelineAndTxResults = conf.redis.connectionFactory.convertPipelineAndTxResults
         }
@@ -106,29 +106,13 @@ Spring Session Grails Plugin provide support for SpringSession project available
         String defaultStrategy = conf.strategy.defaultStrategy as String
         if (defaultStrategy == "HEADER") {
             httpSessionStrategy(HeaderHttpSessionStrategy)
-        } else if (defaultStrategy == "MIX") {
-            headerHttpSessionStrategy(HeaderHttpSessionStrategy)
-            cookieHttpSessionStrategy(CookieHttpSessionStrategy)
-            httpSessionStrategy(HeaderAndCookieHttpSessionStrategy, ref("headerHttpSessionStrategy"), ref("cookieHttpSessionStrategy"))
-        } else {
-            httpSessionStrategy(CookieHttpSessionStrategy)
         }
 
         redisHttpSessionConfiguration(RedisHttpSessionConfiguration) {
             maxInactiveIntervalInSeconds = conf.maxInactiveInterval
-            if (defaultStrategy == "HEADER") {
-                httpSessionStrategy = ref("httpSessionStrategy")
-            }
         }
 
-        if (defaultStrategy != "HEADER") {
-            springSessionRepositoryFilter(SessionRepositoryFilter, ref("sessionRepository")) {
-                httpSessionStrategy = ref("httpSessionStrategy")
-                servletContext = ref("servletContext")
-            }
-        }
-
-        println "+++++++++ Finishing Spring Session configuration"
+        println "++++++ Finishing Spring Session configuration"
     }
 
     def doWithDynamicMethods = { ctx ->
