@@ -1,6 +1,13 @@
-# spring-session
-SpringSession plugin provides [spring-session](http://projects.spring.io/spring-session) support in grails application. SpringSession uses Redis to persist the HTTP Sessions.
-You can find the spring session documentation here: http://docs.spring.io/spring-session/docs/1.0.1.RELEASE/reference/html5/
+# spring-session-grails-plugin
+This plugin provides [spring-session](http://projects.spring.io/spring-session) support in grails application.  SpringSession provides nice features:
+* HttpSession
+  * Clustered Sessions
+  * Multiple Browser Sessions
+  * RESTful APIs
+* WebSocket
+
+SpringSession uses Redis to persist the HTTP Sessions.
+You can find official documentation for Spring Session project here: http://docs.spring.io/spring-session/docs/1.0.1.RELEASE/reference/html5/
 
 ## Using
 Add a plugin in BuildConfig.groovy
