@@ -1,14 +1,11 @@
 import grails.plugin.springsession.converters.GrailsJdkSerializationRedisSerializer
-import grails.plugin.springsession.web.http.HeaderAndCookieHttpSessionStrategy
 import grails.util.Environment
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.serializer.StringRedisSerializer
 import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration
-import org.springframework.session.web.http.CookieHttpSessionStrategy
 import org.springframework.session.web.http.HeaderHttpSessionStrategy
-import org.springframework.session.web.http.SessionRepositoryFilter
 import org.springframework.web.filter.DelegatingFilterProxy
 
 class SpringSessionGrailsPlugin {
@@ -28,11 +25,12 @@ class SpringSessionGrailsPlugin {
     def author = "Jitendra Singh"
     def authorEmail = "jeet.mp3@gmail.com"
     def description = '''\
-Spring Session Grails Plugin provide support for SpringSession project available in Grails.
+Spring Session Grails Plugin provides support for SpringSession project available in Grails.
 '''
 
     // URL to the plugin's documentation
-    def documentation = "http://grails.org/plugin/spring-session"
+    def documentation = "https://github.com/jeetmp3/spring-session"
+//    def documentation = "http://grails.org/plugin/spring-session"
 
     // Extra (optional) plugin metadata
 
@@ -49,7 +47,7 @@ Spring Session Grails Plugin provide support for SpringSession project available
 //    def issueManagement = [ system: "JIRA", url: "http://jira.grails.org/browse/GPMYPLUGIN" ]
 
     // Online location of the plugin's browseable source code.
-//    def scm = [ url: "http://svn.codehaus.org/grails-plugins/" ]
+    def scm = [ url: "https://github.com/jeetmp3/spring-session" ]
 
     def loadAfter = ['springSecurityCore', 'cors']
 
