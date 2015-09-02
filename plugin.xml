@@ -4,7 +4,7 @@
   <title>Spring Session Grails Plugin</title>
   <description>Spring Session Grails Plugin provide support for SpringSession project available in Grails.
 </description>
-  <documentation>https://github.com/jeetmp3/spring-session</documentation>
+  <documentation>http://grails.org/plugin/spring-session</documentation>
   <type>SpringSessionGrailsPlugin</type>
   <resources>
     <resource>DefaultSessionConfig</resource>
