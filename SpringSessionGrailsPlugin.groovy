@@ -1,4 +1,6 @@
 import grails.plugin.springsession.converters.GrailsJdkSerializationRedisSerializer
+import grails.plugin.springsession.data.redis.config.NoOpConfigureRedisAction
+import grails.plugin.springsession.web.http.HttpSessionSynchronizer
 import grails.util.Environment
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory
@@ -112,6 +114,9 @@ Spring Session Grails Plugin provide support for SpringSession project available
         redisHttpSessionConfiguration(RedisHttpSessionConfiguration) {
             maxInactiveIntervalInSeconds = conf.maxInactiveInterval
         }
+
+        configureRedisAction(NoOpConfigureRedisAction)
+        httpSessionSynchronizer(HttpSessionSynchronizer)
 
         println "++++++ Finishing Spring Session configuration"
     }
