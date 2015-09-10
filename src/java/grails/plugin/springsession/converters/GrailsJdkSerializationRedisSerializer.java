@@ -9,31 +9,28 @@ import org.springframework.data.redis.serializer.SerializationException;
 import org.springframework.util.Assert;
 
 /**
- * Created by jitendra on 28/5/15.
+ * @author jitendra
  */
 public class GrailsJdkSerializationRedisSerializer implements RedisSerializer<Object> {
 
-    private Converter<Object, byte[]> serializer;
+    private Converter<Object, byte[]> serializer = new SerializingConverter();
     private Converter<byte[], Object> deserializer;
-    private GrailsApplication grailsApplication;
 
     public GrailsJdkSerializationRedisSerializer(GrailsApplication grailsApplication) {
-        this.grailsApplication = grailsApplication;
-        serializer = new SerializingConverter();
+        Assert.notNull(grailsApplication);
         deserializer = new DeserializingConverter(new JdkDeserializer(grailsApplication.getClassLoader(), false));
-        Assert.notNull(this.grailsApplication);
     }
 
     @Override
     public byte[] serialize(Object object) throws SerializationException {
         if (object == null) {
             return new byte[0];
-        } else {
-            try {
-                return this.serializer.convert(object);
-            } catch (Exception ex) {
-                throw new SerializationException("Cannot serialize", ex);
-            }
+        }
+
+        try {
+            return serializer.convert(object);
+        } catch (Exception ex) {
+            throw new SerializationException("Cannot serialize", ex);
         }
     }
 
@@ -41,14 +38,12 @@ public class GrailsJdkSerializationRedisSerializer implements RedisSerializer<Ob
     public Object deserialize(byte[] bytes) throws SerializationException {
         if (bytes == null || bytes.length == 0) {
             return null;
-        } else {
-            try {
-                return this.deserializer.convert(bytes);
-            } catch (Exception ex) {
-                throw new SerializationException("Cannot deserialize", ex);
-            }
+        }
+
+        try {
+            return deserializer.convert(bytes);
+        } catch (Exception ex) {
+            throw new SerializationException("Cannot deserialize", ex);
         }
     }
-
-
 }

@@ -13,28 +13,14 @@ import org.springframework.web.filter.DelegatingFilterProxy
 class SpringSessionGrailsPlugin {
     def version = "0.1"
     def grailsVersion = "2.4 > *"
-    def pluginExcludes = [
-            "grails-app/views/error.gsp",
-            "grails-app/controllers",
-            "grails-app/views"
-    ]
-
-    // TODO Fill in these fields
-    def title = "Spring Session Grails Plugin" // Headline display name of the plugin
+    def title = "Spring Session Grails Plugin"
     def author = "Jitendra Singh"
     def authorEmail = "jeet.mp3@gmail.com"
-    def description = '''\
-Spring Session Grails Plugin provide support for SpringSession project available in Grails.
-'''
-
+    def description = 'Provides support for SpringSession project'
     def documentation = "http://grails.org/plugin/spring-session"
-
     def license = "APACHE"
-
-    def issueManagement = [ system: "Github", url: "https://github.com/jeetmp3/spring-session/issues" ]
-
-    def scm = [ url: "https://github.com/jeetmp3/spring-session" ]
-
+    def issueManagement = [url: "https://github.com/jeetmp3/spring-session/issues"]
+    def scm = [url: "https://github.com/jeetmp3/spring-session"]
     def loadAfter = ['springSecurityCore', 'cors']
 
     def getWebXmlFilterOrder() {
@@ -118,30 +104,7 @@ Spring Session Grails Plugin provide support for SpringSession project available
         configureRedisAction(NoOpConfigureRedisAction)
         httpSessionSynchronizer(HttpSessionSynchronizer)
 
-        println "++++++ Finishing Spring Session configuration"
-    }
-
-    def doWithDynamicMethods = { ctx ->
-        // TODO Implement registering dynamic methods to classes (optional)
-    }
-
-    def doWithApplicationContext = { ctx ->
-        // TODO Implement post initialization spring config (optional)
-    }
-
-    def onChange = { event ->
-        // TODO Implement code that is executed when any artefact that this plugin is
-        // watching is modified and reloaded. The event contains: event.source,
-        // event.application, event.manager, event.ctx, and event.plugin.
-    }
-
-    def onConfigChange = { event ->
-        // TODO Implement code that is executed when the project configuration changes.
-        // The event is the same as for 'onChange'.
-    }
-
-    def onShutdown = { event ->
-        // TODO Implement code that is executed when the application shuts down (optional)
+        println "++++++ Finished Spring Session configuration"
     }
 
     private void mergeConfig(GrailsApplication grailsApplication) {
