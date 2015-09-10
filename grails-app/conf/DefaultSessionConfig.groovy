@@ -3,11 +3,11 @@ springsession {
     redis {
         connectionFactory {
             hostName = "localhost"
-            port = 6379;
-            timeout = 2000;
-            usePool = true;
-            dbIndex = 0;
-            convertPipelineAndTxResults = true;
+            port = 6379
+            timeout = 2000
+            usePool = true
+            dbIndex = 0
+            convertPipelineAndTxResults = true
         }
         poolConfig {
             maxTotal = 8

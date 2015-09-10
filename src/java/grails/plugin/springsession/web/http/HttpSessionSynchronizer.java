@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Enumeration;
 
 /**
- * Created by jitendra on 20/6/15.
+ * @author jitendra
  */
 public class HttpSessionSynchronizer extends OncePerRequestFilter {
     @Override
@@ -24,7 +24,7 @@ public class HttpSessionSynchronizer extends OncePerRequestFilter {
             try {
                 Object object = session.getAttribute(key);
                 session.setAttribute(key, object);
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
     }
