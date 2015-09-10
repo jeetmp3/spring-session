@@ -1,6 +1,7 @@
 import grails.plugin.springsession.converters.GrailsJdkSerializationRedisSerializer
 import grails.plugin.springsession.data.redis.config.NoOpConfigureRedisAction
 import grails.plugin.springsession.web.http.HttpSessionSynchronizer
+import grails.plugin.webxml.FilterManager
 import grails.util.Environment
 import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory

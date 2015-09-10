@@ -21,5 +21,7 @@ grails.project.dependency.resolution = {
         build(":release:3.1.1", ":rest-client-builder:2.1.1") {
             export = false
         }
+
+        compile ':webxml:1.4.1'
     }
 }
