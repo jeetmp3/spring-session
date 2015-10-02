@@ -18,7 +18,7 @@ class SpringSessionGrailsPlugin {
     def author = "Jitendra Singh"
     def authorEmail = "jeet.mp3@gmail.com"
     def description = 'Provides support for SpringSession project'
-    def documentation = "http://grails.org/plugin/spring-session"
+    def documentation = "https://github.com/jeetmp3/spring-session"
     def license = "APACHE"
     def issueManagement = [url: "https://github.com/jeetmp3/spring-session/issues"]
     def scm = [url: "https://github.com/jeetmp3/spring-session"]
