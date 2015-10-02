@@ -82,6 +82,9 @@ class SpringSessionGrailsPlugin {
             port = conf.redis.connectionFactory.port ?: 6379
             timeout = conf.redis.connectionFactory.timeout ?: 2000
             usePool = conf.redis.connectionFactory.usePool
+            if(conf.redis.connectionFactory.password) {
+                password = conf.redis.connectionFactory.password
+            }
             convertPipelineAndTxResults = conf.redis.connectionFactory.convertPipelineAndTxResults
         }
 
