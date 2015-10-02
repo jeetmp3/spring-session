@@ -8,7 +8,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectStreamClass;
 
 /**
- * Created by jitendra on 28/5/15.
+ * @author jitendra
  */
 public class JdkDeserializer implements Deserializer<Object> {
 
@@ -27,18 +27,18 @@ public class JdkDeserializer implements Deserializer<Object> {
             protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
                 try {
                     return Class.forName(desc.getName(), instantiate, classLoader);
-                } catch (ClassNotFoundException cnfex) {
+                } catch (ClassNotFoundException e) {
                     try {
                         return super.resolveClass(desc);
-                    } catch (ClassNotFoundException cnfex1) {
-                        throw cnfex1;
+                    } catch (ClassNotFoundException e2) {
+                        throw e;
                     }
                 }
             }
         };
         try {
             return objectInputStream.readObject();
-        } catch (ClassNotFoundException cnfex) {
+        } catch (ClassNotFoundException e) {
             return null;
         }
     }
