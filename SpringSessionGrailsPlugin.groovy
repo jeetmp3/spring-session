@@ -12,7 +12,7 @@ import org.springframework.session.web.http.HeaderHttpSessionStrategy
 import org.springframework.web.filter.DelegatingFilterProxy
 
 class SpringSessionGrailsPlugin {
-    def version = "0.1"
+    def version = "1.0"
     def grailsVersion = "2.4 > *"
     def title = "Spring Session Grails Plugin"
     def author = "Jitendra Singh"
