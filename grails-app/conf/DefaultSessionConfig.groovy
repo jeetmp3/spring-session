@@ -14,6 +14,12 @@ springsession {
             maxIdle = 8
             minIdle = 0
         }
+        sentinel {
+            master = null
+            nodes = []
+            password = ''
+            timeout = 2000
+        }
     }
     strategy {
         defaultStrategy = "COOKIE"
