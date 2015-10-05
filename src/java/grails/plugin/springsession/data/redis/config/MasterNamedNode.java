@@ -14,6 +14,6 @@ public class MasterNamedNode implements NamedNode {
     
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 }

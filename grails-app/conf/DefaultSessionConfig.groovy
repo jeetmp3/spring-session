@@ -15,8 +15,8 @@ springsession {
             minIdle = 0
         }
         sentinel {
-            master = null
-            nodes = []
+            master = "mymaster"
+            nodes = [[host: '127.0.0.1', port: 26379]]
             password = ''
             timeout = 2000
         }

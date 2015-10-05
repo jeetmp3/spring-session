@@ -73,15 +73,45 @@ class SpringSessionGrailsPlugin {
     }
 
     def doWithSpring = {
-        println "++++++ Configuring Spring session"
+        println "\n++++++ Configuring Spring session"
         mergeConfig(application)
-        def conf = application.config.springsession
+        ConfigObject conf = application.config.springsession
 
         // JDK Serializer bean
         jdkSerializationRedisSerializer(GrailsJdkSerializationRedisSerializer, ref('grailsApplication'))
         stringRedisSerializer(StringRedisSerializer)
 
-        configureRedis(conf)
+        poolConfig(JedisPoolConfig) {}
+        if (conf.redis.sentinel.master && conf.redis.sentinel.nodes) {
+            List<Map> nodes = conf.redis.sentinel.nodes as List<Map>
+            masterName(MasterNamedNode) {
+                name = conf.redis.sentinel.master
+            }
+            shardInfo(JedisShardInfo, conf.redis.connectionFactory.hostName, conf.redis.connectionFactory.port) {
+                password = conf.redis.sentinel.password ?: null
+                timeout = conf.redis.sentinel.timeout ?: 5000
+            }
+            redisSentinelConfiguration(RedisSentinelConfiguration) {
+                master = ref("masterName")
+                sentinels = (nodes.collect { new RedisNode(it.host as String, it.port as Integer) }) as Set
+            }
+            redisConnectionFactory(JedisConnectionFactory, ref("redisSentinelConfiguration"), ref("poolConfig")) {
+                shardInfo = ref("shardInfo")
+                usePool = conf.redis.connectionFactory.usePool
+            }
+        } else {
+            // Redis Connection Factory Default is JedisConnectionFactory
+            redisConnectionFactory(JedisConnectionFactory) {
+                hostName = conf.redis.connectionFactory.hostName ?: "localhost"
+                port = conf.redis.connectionFactory.port ?: 6379
+                timeout = conf.redis.connectionFactory.timeout ?: 2000
+                usePool = conf.redis.connectionFactory.usePool
+                if (conf.redis.connectionFactory.password) {
+                    password = conf.redis.connectionFactory.password
+                }
+                convertPipelineAndTxResults = conf.redis.connectionFactory.convertPipelineAndTxResults
+            }
+        }
 
         sessionRedisTemplate(RedisTemplate) { bean ->
             keySerializer = ref("stringRedisSerializer")
@@ -106,38 +136,8 @@ class SpringSessionGrailsPlugin {
         println "++++++ Finished Spring Session configuration"
     }
 
-    private void configureRedis(def conf) {
-        poolConfig(JedisPoolConfig)
-        if (conf.redis.sentinel.master && conf.redis.sentinel.nodes) {
-            List<Map> nodes = conf.redis.sentinel.nodes as List<Map>
+    def configureRedis = { ConfigObject conf ->
 
-            masterName(MasterNamedNode) {
-                name = conf.redis.sentinel.master
-            }
-            shardInfo(JedisShardInfo) {
-                password = conf.redis.sentinel.password ?: null
-                timeout = conf.redis.sentinel.timeout ?: 5000
-            }
-            redisSentinelConfiguration(RedisSentinelConfiguration) {
-                master = ref("masterName")
-                sentinels = (nodes.collect {new RedisNode(it.host as String, it.port as Integer)}) as Set
-            }
-            redisConnectionFactory(JedisConnectionFactory, ref("redisSentinelConfiguration"), ref("poolConfig")) {
-                shardInfo = ref("shardInfo")
-            }
-        } else {
-            // Redis Connection Factory Default is JedisConnectionFactory
-            redisConnectionFactory(JedisConnectionFactory) {
-                hostName = conf.redis.connectionFactory.hostName ?: "localhost"
-                port = conf.redis.connectionFactory.port ?: 6379
-                timeout = conf.redis.connectionFactory.timeout ?: 2000
-                usePool = conf.redis.connectionFactory.usePool
-                if (conf.redis.connectionFactory.password) {
-                    password = conf.redis.connectionFactory.password
-                }
-                convertPipelineAndTxResults = conf.redis.connectionFactory.convertPipelineAndTxResults
-            }
-        }
     }
 
     private void mergeConfig(GrailsApplication grailsApplication) {
