@@ -28,7 +28,9 @@ Default configuration will lookup Redis server on your `localhost` port `6379`. 
 ```
 springsession.redis.connectionFactory.hostName = "<redis server ip>"
 springsession.redis.connectionFactory.port = 6379
+springsession.redis.connectionFactory.password = <password>
 ```
+
 #### 2. Change Session Strategy Configuration
 Default session strategy is `Cookie` based and session cookie name is `SESSION` You can override the default session strategy
 ```
@@ -45,6 +47,12 @@ To change default cookie name add below configuration
 springsession.strategy.defaultStrategy.cookie.name="Your Cookie name"
 ```
 
+#### 3. Configure redis sentinel
+```
+springsession.redis.sentinel.master="<Sentinel master name>"
+springsession.redis.sentinel.nodes=[[host: "hostname", port: xxxx], [host: "another host", port: xxxx]]
+springsession.redis.sentinel.password="Sentinel password"
+```
 ## Version Support
 * Grails 2.4 +
 * Redis 2.8 +

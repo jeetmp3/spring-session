@@ -6,6 +6,7 @@
 /.idea
 /.classpath
 /.project
+classes/
 /.settings
 /build
 /grails-spring-session-*.zip
