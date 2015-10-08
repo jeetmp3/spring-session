@@ -28,7 +28,7 @@ Default configuration will lookup Redis server on your `localhost` port `6379`. 
 ```
 springsession.redis.connectionFactory.hostName = "<redis server ip>"
 springsession.redis.connectionFactory.port = 6379
-springsession.redis.connectionFactory.password = <password>
+springsession.redis.connectionFactory.password = "<password>"
 ```
 
 #### 2. Change Session Strategy Configuration
