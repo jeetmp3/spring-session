@@ -42,11 +42,11 @@ This will enable HTTP Header based session strategy. Default token name is `x-au
 springsession.strategy.token.headerName = "new token name"
 ```
 
-To change default cookie name add below configuration. (**Note: Property ~~springsession.strategy.defaultStrategy.cookie.name~~ is removed 
-in 1.1**) 
+To change default cookie name add below configuration. 
 ```
 springsession.strategy.cookie.name="Your Cookie name"
 ```
+(**Note: Property ~~springsession.strategy.defaultStrategy.cookie.name~~ is no longer available in version 1.1 and higher**) 
 
 #### 3. Configure redis sentinel
 ```
