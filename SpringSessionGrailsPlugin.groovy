@@ -11,13 +11,14 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.serializer.StringRedisSerializer
 import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration
+import org.springframework.session.web.http.CookieHttpSessionStrategy
 import org.springframework.session.web.http.HeaderHttpSessionStrategy
 import org.springframework.web.filter.DelegatingFilterProxy
 import redis.clients.jedis.JedisPoolConfig
 import redis.clients.jedis.JedisShardInfo
 
 class SpringSessionGrailsPlugin {
-    def version = "1.0"
+    def version = "1.1"
     def grailsVersion = "2.4 > *"
     def title = "Spring Session Grails Plugin"
     def author = "Jitendra Singh"
@@ -106,6 +107,7 @@ class SpringSessionGrailsPlugin {
                 port = conf.redis.connectionFactory.port ?: 6379
                 timeout = conf.redis.connectionFactory.timeout ?: 2000
                 usePool = conf.redis.connectionFactory.usePool
+                database = conf.redis.connectionFactory.dbIndex
                 if (conf.redis.connectionFactory.password) {
                     password = conf.redis.connectionFactory.password
                 }
@@ -121,13 +123,20 @@ class SpringSessionGrailsPlugin {
             bean.initMethod = "afterPropertiesSet"
         }
 
-        String defaultStrategy = conf.strategy.defaultStrategy as String
+        String defaultStrategy = conf.strategy.defaultStrategy
         if (defaultStrategy == "HEADER") {
-            httpSessionStrategy(HeaderHttpSessionStrategy)
+            httpSessionStrategy(HeaderHttpSessionStrategy) {
+                headerName = conf.strategy.httpHeader.headerName
+            }
+        } else {
+            httpSessionStrategy(CookieHttpSessionStrategy) {
+                cookieName = conf.strategy.cookie.name
+            }
         }
 
         redisHttpSessionConfiguration(RedisHttpSessionConfiguration) {
             maxInactiveIntervalInSeconds = conf.maxInactiveInterval
+            httpSessionStrategy = ref("httpSessionStrategy")
         }
 
         configureRedisAction(NoOpConfigureRedisAction)
