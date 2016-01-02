@@ -18,7 +18,7 @@ import redis.clients.jedis.JedisPoolConfig
 import redis.clients.jedis.JedisShardInfo
 
 class SpringSessionGrailsPlugin {
-    def version = "1.1"
+    def version = "1.2"
     def grailsVersion = "2.4 > *"
     def title = "Spring Session Grails Plugin"
     def author = "Jitendra Singh"
@@ -27,25 +27,27 @@ class SpringSessionGrailsPlugin {
     def documentation = "https://github.com/jeetmp3/spring-session"
     def license = "APACHE"
     def issueManagement = [url: "https://github.com/jeetmp3/spring-session/issues"]
-    def scm = [url: "https://github.com/jeetmp3/spring-session"]
+    def scm = [url: "https://github.com/jeetmp3/sprinrequest.getSession()g-session"]
     def loadAfter = ['springSecurityCore', 'cors']
 
     def getWebXmlFilterOrder() {
-        [springSessionRepositoryFilter: FilterManager.GRAILS_WEB_REQUEST_POSITION - 1]
+        FilterManager filterManager = getClass().getClassLoader().loadClass('grails.plugin.webxml.FilterManager')
+        return [springSessionRepositoryFilter: filterManager.CHAR_ENCODING_POSITION - 2,
+                httpSessionSynchronizer: filterManager.CHAR_ENCODING_POSITION - 1]
     }
 
     def doWithWebDescriptor = { xml ->
         def contextParams = xml.'context-param'
         contextParams[contextParams.size() - 1] + {
             filter {
-                'filter-name'('httpSessionSynchronizer')
+                'filter-name'('springSessionRepositoryFilter')
                 'filter-class'(DelegatingFilterProxy.name)
             }
         }
 
         contextParams[contextParams.size() - 1] + {
             filter {
-                'filter-name'('springSessionRepositoryFilter')
+                'filter-name'('httpSessionSynchronizer')
                 'filter-class'(DelegatingFilterProxy.name)
             }
         }
@@ -140,7 +142,9 @@ class SpringSessionGrailsPlugin {
         }
 
         configureRedisAction(NoOpConfigureRedisAction)
-        httpSessionSynchronizer(HttpSessionSynchronizer)
+        httpSessionSynchronizer(HttpSessionSynchronizer) {
+            persistMutable = conf.allow.persist.mutable as Boolean
+        }
 
         println "++++++ Finished Spring Session configuration"
     }

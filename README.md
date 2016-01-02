@@ -57,6 +57,13 @@ springsession.redis.sentinel.master="<Sentinel master name>"
 springsession.redis.sentinel.nodes=[[host: "hostname", port: xxxx], [host: "another host", port: xxxx]]
 springsession.redis.sentinel.password="Sentinel password"
 ```
+
+### 4. Enable update mutable objects in session
+By default spring session doesn't update mutable objects value stored in session. You can override this behaviour by setting 
+below property to `true`. By default this value is `false`.
+ ```
+ springsession.allow.persist.mutable = true
+ ```
 ## Version Support
 * Grails 2.4 +
 * Redis 2.8 +

@@ -26,4 +26,5 @@ springsession {
         cookie.name = "SESSION"
         httpHeader.headerName = "x-auth-token"
     }
+    allow.persist.mutable = false
 }
