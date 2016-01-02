@@ -16,7 +16,7 @@ Currently this plugin provides support for HttpSession only. WebSocket support w
 Just add a plugin in BuildConfig.groovy.
 ```
 plugins {
-    runtime ":spring-session:1.1"
+    runtime ":spring-session:1.2"
     ...
 }
 ```
@@ -58,8 +58,8 @@ springsession.redis.sentinel.nodes=[[host: "hostname", port: xxxx], [host: "anot
 springsession.redis.sentinel.password="Sentinel password"
 ```
 
-### 4. Enable update mutable objects in session
-By default spring session doesn't update mutable objects value stored in session. You can override this behaviour by setting 
+#### 4. Enable update mutable objects in session
+By default spring session doesn't update mutable object value stored in session. You can override this behaviour by setting 
 below property to `true`. By default this value is `false`.
  ```
  springsession.allow.persist.mutable = true
