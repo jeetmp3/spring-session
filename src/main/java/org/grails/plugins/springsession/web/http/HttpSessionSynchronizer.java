@@ -1,5 +1,7 @@
-package grails.plugin.springsession.web.http;
+package org.grails.plugins.springsession.web.http;
 
+import org.springframework.core.annotation.Order;
+import org.springframework.session.web.http.SessionRepositoryFilter;
 import org.springframework.util.Assert;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -14,6 +16,7 @@ import java.util.Enumeration;
 /**
  * @author jitendra
  */
+@Order(SessionRepositoryFilter.DEFAULT_ORDER + 1)
 public class HttpSessionSynchronizer extends OncePerRequestFilter {
 
     private Boolean persistMutable;
