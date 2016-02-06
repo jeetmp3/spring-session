@@ -14,3 +14,7 @@ classes/
 /plugin.xml
 /target
 /web-app
+gradle/
+gradlew
+gradlew.bat
+
