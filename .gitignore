@@ -15,6 +15,7 @@ classes/
 /target
 /web-app
 gradle/
+.gradle
 gradlew
 gradlew.bat
-
+*.ipr

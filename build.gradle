@@ -11,8 +11,8 @@ buildscript {
     }
 }
 
-version "0.1"
-group "spring.session"
+version "2.0.0-SNAPSHOT"
+group "org.grails.plugins"
 
 apply plugin:"eclipse"
 apply plugin:"idea"
@@ -27,7 +27,7 @@ ext {
 
 repositories {
     mavenLocal()
-    maven { url "https://repo.grails.org/grails/core" }
+    maven { url "https://repo.grails.org/grails/repo" }
 }
 
 dependencyManagement {
@@ -55,6 +55,10 @@ dependencies {
     testCompile "org.grails.plugins:geb"
     testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
     testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
+    compile('org.springframework.session:spring-session:1.0.2.RELEASE')
+    compile('org.springframework.boot:spring-boot-starter-redis')
+    compile("org.grails.plugins:release:3.1.1")
+    compile("org.grails.plugins:rest-client-builder:2.1.1")
 }
 
 task wrapper(type: Wrapper) {
