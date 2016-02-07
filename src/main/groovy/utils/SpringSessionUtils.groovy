@@ -33,10 +33,7 @@ class SpringSessionUtils {
     }
 
     private static void mergeConfig(ConfigObject defaultConfig, ConfigObject currentConfig) {
-        println "Current Config -----> ${currentConfig}"
-        println "Default Config -----> ${defaultConfig}"
         config = defaultConfig.merge(currentConfig) as ConfigObject
-        println "Merge Result Config -----> ${defaultConfig}"
         ConfigObject mergedConfig = new ConfigObject()
         mergedConfig.springsession = config
         PropertySource propertySource = new MapPropertySource('SessionConfig', mergedConfig)
