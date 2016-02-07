@@ -1,6 +1,5 @@
-import grails.test.spock.IntegrationSpec
+import grails.plugin.spock.IntegrationSpec
 import org.codehaus.groovy.grails.commons.GrailsApplication
-import org.junit.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory
 import redis.clients.jedis.JedisShardInfo
@@ -16,29 +15,20 @@ class ConfigurationTest extends IntegrationSpec {
     @Autowired
     JedisShardInfo shardInfo
 
-    void setup() {
-
-    }
-
     void "Canary Test"() {
         expect:
         true;
     }
 
-    void "Test ShardInfo"(){
-        expect:
-        shardInfo
-    }
-
-    def "Test Connection Factory"() {
-
-        expect:
-        redisConnectionFactory
-    }
-//    @Test
-//    void "Test Redis connection Factory"() {
+//    void "Test ShardInfo"() {
 //        expect:
-//        grailsApplication.mainContext.getBean("redisConnectionFactory")
+//        shardInfo
+//    }
+//
+//    def "Test Connection Factory"() {
+//
+//        expect:
+//        redisConnectionFactory
 //    }
 
     void cleanup() {

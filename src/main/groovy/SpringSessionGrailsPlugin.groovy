@@ -1,10 +1,10 @@
+import grails.plugins.Plugin
+import groovy.util.logging.Slf4j
 import org.grails.plugins.springsession.converters.GrailsJdkSerializationRedisSerializer
 import org.grails.plugins.springsession.data.redis.config.MasterNamedNode
 import org.grails.plugins.springsession.data.redis.config.NoOpConfigureRedisAction
 import org.grails.plugins.springsession.web.http.HttpSessionSynchronizer
-import grails.util.Environment
-import org.codehaus.groovy.grails.commons.GrailsApplication
-import org.grails.plugins.springsession.web.http.config.SpringSessionConfig
+import org.grails.plugins.springsession.config.SpringSessionConfig
 import org.springframework.data.redis.connection.RedisNode
 import org.springframework.data.redis.connection.RedisSentinelConfiguration
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory
@@ -15,10 +15,13 @@ import org.springframework.session.web.http.CookieHttpSessionStrategy
 import org.springframework.session.web.http.HeaderHttpSessionStrategy
 import redis.clients.jedis.JedisPoolConfig
 import redis.clients.jedis.JedisShardInfo
+import utils.SpringSessionUtils
 
-class SpringSessionGrailsPlugin {
-    def version = "2.0.0-RC1"
-    def grailsVersion = "3.0.1 > *"
+@Slf4j
+class SpringSessionGrailsPlugin extends Plugin {
+
+    def version = "2.0.0-SNAPSHOT"
+    def grailsVersion = "3.0.0 > *"
     def title = "Spring Session Grails Plugin"
     def author = "Jitendra Singh"
     def authorEmail = "jeet.mp3@gmail.com"
@@ -28,19 +31,18 @@ class SpringSessionGrailsPlugin {
     def issueManagement = [url: "https://github.com/jeetmp3/spring-session/issues"]
     def scm = [url: "https://github.com/jeetmp3/sprinrequest.getSession()g-session"]
     def loadAfter = ['springSecurityCore', 'cors']
+    def profiles = ['web']
 
     Closure doWithSpring() {
         { ->
             println "\n++++++ Configuring Spring session"
-            mergeConfig(application)
-            ConfigObject conf = application.config.springsession
+            SpringSessionUtils.application = grailsApplication
+            ConfigObject conf = SpringSessionUtils.sessionConfig
 
-            springSessionConfig(SpringSessionConfig)
-            // JDK Serializer bean
-            jdkSerializationRedisSerializer(GrailsJdkSerializationRedisSerializer, ref('grailsApplication'))
-            stringRedisSerializer(StringRedisSerializer)
+            springSessionConfig(SpringSessionConfig) {
+                grailsApplication = grailsApplication
+            }
 
-            poolConfig(JedisPoolConfig) {}
             if (conf.redis.sentinel.master && conf.redis.sentinel.nodes) {
                 List<Map> nodes = conf.redis.sentinel.nodes as List<Map>
                 masterName(MasterNamedNode) {
@@ -104,16 +106,5 @@ class SpringSessionGrailsPlugin {
 
             println "++++++ Finished Spring Session configuration"
         }
-    }
-
-    def configureRedis = { ConfigObject conf ->
-
-    }
-
-    private void mergeConfig(GrailsApplication grailsApplication) {
-        ConfigSlurper configSlurper = new ConfigSlurper(Environment.current.name)
-        ConfigObject configObject = configSlurper.parse(grailsApplication.classLoader.loadClass("DefaultSessionConfig"))
-        configObject.merge(grailsApplication.config)
-        grailsApplication.config = configObject
     }
 }
