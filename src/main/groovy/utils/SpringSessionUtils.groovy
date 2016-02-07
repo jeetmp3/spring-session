@@ -11,7 +11,7 @@ import static org.springframework.util.ObjectUtils.isEmpty
 class SpringSessionUtils {
 
     public static GrailsApplication application;
-    private static ConfigObject config;
+    protected static ConfigObject config;
 
     public static ConfigObject getSessionConfig() {
         if(isEmpty(config)) {

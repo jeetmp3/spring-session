@@ -76,3 +76,11 @@ test {
         events 'started', 'passed'
     }
 }
+
+test {
+    jvmArgs '-Xverify:none'
+}
+
+integrationTest {
+    jvmArgs '-Xverify:none'
+}
