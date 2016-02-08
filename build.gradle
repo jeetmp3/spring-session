@@ -18,7 +18,6 @@ apply plugin:"eclipse"
 apply plugin:"idea"
 apply plugin:"org.grails.grails-plugin"
 apply plugin:"org.grails.grails-plugin-publish"
-apply plugin:"org.grails.grails-gsp"
 
 ext {
     grailsVersion = project.grailsVersion
@@ -58,17 +57,15 @@ task wrapper(type: Wrapper) {
 }
 grailsPublish {
     // TODO: Provide values here
-    user = 'user'
-    key = 'key'
-    githubSlug = 'foo/bar'
+    githubSlug = 'jeetmp3/spring-session'
     license {
         name = 'Apache-2.0'
     }
-    title = "My Plugin"
-    desc = "Full plugin description"
-    developers = [johndoe:"John Doe"]
+    title = "Spring Session Grails Plugin"
+    desc = "Provides support for SpringSession project"
+    developers = [jeetmp3:"Jitendra Singh"]
     portalUser = ""
-    portalPassword = ""    
+    portalPassword = ""
 }
 
 test {
