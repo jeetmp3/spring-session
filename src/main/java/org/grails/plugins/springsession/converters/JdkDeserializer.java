@@ -1,4 +1,4 @@
-package grails.plugin.springsession.converters;
+package org.grails.plugins.springsession.converters;
 
 import org.springframework.core.serializer.Deserializer;
 

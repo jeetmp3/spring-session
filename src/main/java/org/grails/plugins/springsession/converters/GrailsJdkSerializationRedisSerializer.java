@@ -1,6 +1,6 @@
-package grails.plugin.springsession.converters;
+package org.grails.plugins.springsession.converters;
 
-import org.codehaus.groovy.grails.commons.GrailsApplication;
+import grails.core.GrailsApplication;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.serializer.support.DeserializingConverter;
 import org.springframework.core.serializer.support.SerializingConverter;
