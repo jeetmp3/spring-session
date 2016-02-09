@@ -46,6 +46,7 @@ dependencies {
     console "org.grails:grails-console"
     profile "org.grails.profiles:web-plugin:3.1.1"
     testCompile "org.grails:grails-plugin-testing"
+    testCompile "org.grails.plugins:geb"
 
     compile('org.springframework.session:spring-session:1.0.2.RELEASE')
     compile('org.springframework.data:spring-data-redis:1.4.2.RELEASE')
