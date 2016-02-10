@@ -94,10 +94,10 @@ class SpringSessionGrailsPlugin extends Plugin {
                 }
             }
 
-            redisHttpSessionConfiguration(RedisHttpSessionConfiguration) {
-                maxInactiveIntervalInSeconds = conf.maxInactiveInterval
-                httpSessionStrategy = ref("httpSessionStrategy")
-            }
+//            redisHttpSessionConfiguration(RedisHttpSessionConfiguration) {
+//                maxInactiveIntervalInSeconds = conf.maxInactiveInterval
+//                httpSessionStrategy = ref("httpSessionStrategy")
+//            }
 
             configureRedisAction(NoOpConfigureRedisAction)
             httpSessionSynchronizer(HttpSessionSynchronizer) {

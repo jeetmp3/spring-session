@@ -72,3 +72,6 @@ grails:
 endpoints:
     jmx:
         unique-names: true
+
+springsession:
+  maxInactiveInterval: 5

@@ -39,14 +39,18 @@ dependencyManagement {
 dependencies {
     compile "org.springframework.boot:spring-boot-starter-logging"
     compile "org.springframework.boot:spring-boot-autoconfigure"
-    compile "org.grails:grails-core"
     compile "org.springframework.boot:spring-boot-starter-tomcat"
+
+    compile "org.grails:grails-core"
     compile "org.grails:grails-dependencies"
     compile "org.grails:grails-web-boot"
+
     console "org.grails:grails-console"
-    profile "org.grails.profiles:web-plugin:3.1.1"
+
     testCompile "org.grails:grails-plugin-testing"
     testCompile "org.grails.plugins:geb"
+
+    testRuntime 'org.seleniumhq.selenium:selenium-chrome-driver:2.44.0'
 
     compile('org.springframework.session:spring-session:1.0.2.RELEASE')
     compile('org.springframework.data:spring-data-redis:1.4.2.RELEASE')
@@ -81,4 +85,10 @@ test {
 
 integrationTest {
     jvmArgs '-Xverify:none'
+}
+
+integrationTest {
+    testLogging {
+        events 'started', 'passed'
+    }
 }
