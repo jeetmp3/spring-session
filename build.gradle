@@ -1,0 +1,106 @@
+buildscript {
+    ext {
+        grailsVersion = project.grailsVersion
+    }
+    repositories {
+        mavenLocal()
+        maven { url "https://repo.grails.org/grails/core" }
+    }
+    dependencies {
+        classpath "org.grails:grails-gradle-plugin:$grailsVersion"
+    }
+}
+
+version "2.0.0-RC1"
+group "org.grails.plugins"
+
+apply plugin:"eclipse"
+apply plugin:"idea"
+apply plugin:"org.grails.grails-plugin"
+apply plugin:"org.grails.grails-plugin-publish"
+
+ext {
+    grailsVersion = project.grailsVersion
+    gradleWrapperVersion = project.gradleWrapperVersion
+}
+
+repositories {
+    mavenLocal()
+    maven { url "https://repo.grails.org/grails/repo" }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.grails:grails-bom:$grailsVersion"
+    }
+    applyMavenExclusions false
+}
+
+dependencies {
+    compile "org.springframework.boot:spring-boot-starter-logging"
+    compile "org.springframework.boot:spring-boot-autoconfigure"
+    compile "org.springframework.boot:spring-boot-starter-tomcat"
+
+    compile "org.grails:grails-core"
+    compile "org.grails:grails-dependencies"
+    compile "org.grails:grails-web-boot"
+
+    console "org.grails:grails-console"
+
+    testCompile "org.grails:grails-plugin-testing"
+    testCompile "org.grails.plugins:geb"
+
+    testRuntime 'org.seleniumhq.selenium:selenium-chrome-driver:2.44.0'
+
+    compile('org.springframework.session:spring-session:1.0.2.RELEASE')
+    compile('org.springframework.data:spring-data-redis:1.4.2.RELEASE')
+    compile('redis.clients:jedis:2.5.2')
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = gradleWrapperVersion
+}
+grailsPublish {
+    // TODO: Provide values here
+    githubSlug = 'jeetmp3/spring-session'
+    license {
+        name = 'Apache-2.0'
+    }
+    title = "Spring Session Grails Plugin"
+    desc = "Provides support for SpringSession project"
+    developers = [jeetmp3:"Jitendra Singh"]
+    portalUser = ""
+    portalPassword = ""
+}
+
+bintray {
+    pkg {
+        name = "$project.name"
+        issueTrackerUrl = "https://github.com/jeetmp3/$project.name/issues"
+        vcsUrl = "https://github.com/jeetmp3/$project.name"
+        version {
+            attributes = ['grails-plugin': "$project.group:$project.name"]
+            name = project.version
+        }
+    }
+}
+
+test {
+    testLogging {
+        events 'started', 'passed'
+    }
+}
+
+test {
+    jvmArgs '-Xverify:none'
+}
+
+integrationTest {
+    jvmArgs '-Xverify:none'
+}
+
+integrationTest {
+    testLogging {
+        events 'started', 'passed'
+    }
+}
