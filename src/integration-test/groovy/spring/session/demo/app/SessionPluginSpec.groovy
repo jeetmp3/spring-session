@@ -1,9 +1,7 @@
 package spring.session.demo.app
 
 import grails.test.mixin.integration.Integration
-import grails.transaction.*
 
-import spock.lang.*
 import geb.spock.*
 
 /**
