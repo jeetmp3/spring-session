@@ -18,7 +18,7 @@ import redis.clients.jedis.JedisPoolConfig
 import redis.clients.jedis.JedisShardInfo
 
 class SpringSessionGrailsPlugin {
-    def version = "1.2"
+    def version = "1.2.1"
     def grailsVersion = "2.4 > *"
     def title = "Spring Session Grails Plugin"
     def author = "Jitendra Singh"
