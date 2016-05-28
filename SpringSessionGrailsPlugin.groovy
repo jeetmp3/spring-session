@@ -27,7 +27,7 @@ class SpringSessionGrailsPlugin {
     def documentation = "https://github.com/jeetmp3/spring-session"
     def license = "APACHE"
     def issueManagement = [url: "https://github.com/jeetmp3/spring-session/issues"]
-    def scm = [url: "https://github.com/jeetmp3/sprinrequest.getSession()g-session"]
+    def scm = [url: "https://github.com/jeetmp3/spring-session"]
     def loadAfter = ['springSecurityCore', 'cors']
 
     def getWebXmlFilterOrder() {
