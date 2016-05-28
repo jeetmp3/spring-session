@@ -110,6 +110,7 @@ class SpringSessionGrailsPlugin {
                 timeout = conf.redis.connectionFactory.timeout ?: 2000
                 usePool = conf.redis.connectionFactory.usePool
                 database = conf.redis.connectionFactory.dbIndex
+                poolConfig = ref("poolConfig")
                 if (conf.redis.connectionFactory.password) {
                     password = conf.redis.connectionFactory.password
                 }
