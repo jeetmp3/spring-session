@@ -1,13 +1,12 @@
 import grails.test.spock.IntegrationSpec
-import org.codehaus.groovy.grails.commons.GrailsApplication
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory
 
 /**
  * @author jitendra on 2/10/15.
  */
 class ConfigurationTest extends IntegrationSpec {
 
-    def redisConnectionFactory
-    GrailsApplication grailsApplication
+    JedisConnectionFactory redisConnectionFactory
 
     void setup() {
 
@@ -19,9 +18,12 @@ class ConfigurationTest extends IntegrationSpec {
     }
 
     def "Test Connection Factory"() {
-
         expect:
         redisConnectionFactory
+        redisConnectionFactory.hostName == "localhost"
+        redisConnectionFactory.port == 6379
+        redisConnectionFactory.timeout == 2000
+        redisConnectionFactory.usePool
     }
 
     void cleanup() {
