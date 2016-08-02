@@ -14,3 +14,9 @@ classes/
 /plugin.xml
 /target
 /web-app
+samples/spring-session-redis/.classpath
+samples/spring-session-redis/*.iml
+samples/spring-session-redis/*.iws
+samples/spring-session-redis/*.project
+*.class
+*.class*
