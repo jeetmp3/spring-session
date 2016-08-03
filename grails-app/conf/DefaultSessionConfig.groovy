@@ -1,3 +1,5 @@
+import grails.plugin.springsession.enums.SessionStore
+
 springsession {
     maxInactiveInterval = 1800
     redis {
@@ -21,6 +23,7 @@ springsession {
             timeout = 2000
         }
     }
+    sessionStore = SessionStore.REDIS
     strategy {
         defaultStrategy = "COOKIE"
         cookie.name = "SESSION"
