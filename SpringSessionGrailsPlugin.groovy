@@ -1,6 +1,9 @@
+import grails.plugin.springsession.SpringSessionConfig
 import grails.plugin.springsession.converters.GrailsJdkSerializationRedisSerializer
 import grails.plugin.springsession.data.redis.config.MasterNamedNode
 import grails.plugin.springsession.data.redis.config.NoOpConfigureRedisAction
+import grails.plugin.springsession.data.redis.config.RedisSpringSessionConfig
+import grails.plugin.springsession.enums.SessionStore
 import grails.plugin.springsession.web.http.HttpSessionSynchronizer
 import grails.plugin.webxml.FilterManager
 import grails.util.Environment
@@ -81,70 +84,21 @@ class SpringSessionGrailsPlugin {
         ConfigObject conf = application.config.springsession
 
         // JDK Serializer bean
-        jdkSerializationRedisSerializer(GrailsJdkSerializationRedisSerializer, ref('grailsApplication'))
-        stringRedisSerializer(StringRedisSerializer)
+        springSessionConfig(SpringSessionConfig, ref("grailsApplication"), conf.allow.persist.mutable as Boolean) {}
 
-        poolConfig(JedisPoolConfig) {}
-        if (conf.redis.sentinel.master && conf.redis.sentinel.nodes) {
-            List<Map> nodes = conf.redis.sentinel.nodes as List<Map>
-            masterName(MasterNamedNode) {
-                name = conf.redis.sentinel.master
-            }
-            shardInfo(JedisShardInfo, conf.redis.connectionFactory.hostName, conf.redis.connectionFactory.port) {
-                password = conf.redis.sentinel.password ?: null
-                timeout = conf.redis.sentinel.timeout ?: 5000
-            }
-            redisSentinelConfiguration(RedisSentinelConfiguration) {
-                master = ref("masterName")
-                sentinels = (nodes.collect { new RedisNode(it.host as String, it.port as Integer) }) as Set
-            }
-            redisConnectionFactory(JedisConnectionFactory, ref("redisSentinelConfiguration"), ref("poolConfig")) {
-                shardInfo = ref("shardInfo")
-                usePool = conf.redis.connectionFactory.usePool
-            }
-        } else {
-            // Redis Connection Factory Default is JedisConnectionFactory
-            redisConnectionFactory(JedisConnectionFactory) {
-                hostName = conf.redis.connectionFactory.hostName ?: "localhost"
-                port = conf.redis.connectionFactory.port ?: 6379
-                timeout = conf.redis.connectionFactory.timeout ?: 2000
-                usePool = conf.redis.connectionFactory.usePool
-                database = conf.redis.connectionFactory.dbIndex
-                poolConfig = ref("poolConfig")
-                if (conf.redis.connectionFactory.password) {
-                    password = conf.redis.connectionFactory.password
-                }
-                convertPipelineAndTxResults = conf.redis.connectionFactory.convertPipelineAndTxResults
-            }
-        }
+        SessionStore store = conf.sessionStore ?: SessionStore.REDIS
 
-        sessionRedisTemplate(RedisTemplate) { bean ->
-            keySerializer = ref("stringRedisSerializer")
-            hashKeySerializer = ref("stringRedisSerializer")
-            connectionFactory = ref("redisConnectionFactory")
-            defaultSerializer = ref("jdkSerializationRedisSerializer")
-            bean.initMethod = "afterPropertiesSet"
-        }
-
-        String defaultStrategy = conf.strategy.defaultStrategy
-        if (defaultStrategy == "HEADER") {
-            httpSessionStrategy(HeaderHttpSessionStrategy) {
-                headerName = conf.strategy.httpHeader.headerName
-            }
-        } else {
-            httpSessionStrategy(CookieHttpSessionStrategy) {
-                cookieName = conf.strategy.cookie.name
-            }
+        switch (store) {
+            case SessionStore.REDIS:
+                redisSpringSessionConfig(RedisSpringSessionConfig, conf) {}
+                break
+            case SessionStore.MONGO:
+                break
         }
 
         redisHttpSessionConfiguration(RedisHttpSessionConfiguration) {
             maxInactiveIntervalInSeconds = conf.maxInactiveInterval
             httpSessionStrategy = ref("httpSessionStrategy")
-        }
-
-        configureRedisAction(NoOpConfigureRedisAction)
-        httpSessionSynchronizer(HttpSessionSynchronizer) {
-            persistMutable = conf.allow.persist.mutable as Boolean
         }
 
         println "++++++ Finished Spring Session configuration"
