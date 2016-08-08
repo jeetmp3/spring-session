@@ -1,11 +1,11 @@
-package grails.plugin.springsession.data.redis.config
+package grails.plugin.springsession.store.redis.config
 
 import grails.plugin.springsession.enums.SessionStrategy
 
 /**
  * @author Jitendra Singh.
  */
-class RedisConfigProperties {
+class RedisStoreConfigProperties {
 
     List<Map> sentinalNodes
     String sentinalMasterName
@@ -22,12 +22,12 @@ class RedisConfigProperties {
     String sessionHeaderName
     String sessionCookieName
 
-    public RedisConfigProperties(ConfigObject conf) {
+    public RedisStoreConfigProperties(ConfigObject conf) {
         sentinalNodes = conf.redis.sentinel.nodes as List<Map>
         sentinalMasterName = conf.redis.sentinel.master ?: ""
         usePool = conf.redis.connectionFactory.usePool ?: false
         hostName = conf.redis.connectionFactory.hostName
-        connectionPassword = conf.redis.connectionFactory.password
+        connectionPassword = conf.redis.connectionFactory.password ?: ''
         port = conf.redis.connectionFactory.port
         sentinalPassword = conf.redis.sentinel.password ?: null
         timeout = conf.redis.sentinel.timeout ?: 5000
