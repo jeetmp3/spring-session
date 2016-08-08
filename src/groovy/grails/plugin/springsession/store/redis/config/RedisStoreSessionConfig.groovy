@@ -1,6 +1,15 @@
-package grails.plugin.springsession.data.redis.config
+package grails.plugin.springsession.store.redis.config
 
-import grails.plugin.springsession.enums.SessionStrategy
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import grails.plugin.springsession.config.SpringSessionConfig
+import grails.plugin.springsession.converters.GrailsJdkSerializationRedisSerializer
+import grails.plugin.springsession.enums.Serializer
+import grails.plugin.springsession.redis.config.MasterNamedNode
+import grails.plugin.springsession.redis.config.NoOpConfigureRedisAction
+import grails.plugin.springsession.utils.ApplicationUtils
+import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.data.redis.connection.RedisConnectionFactory
@@ -8,22 +17,33 @@ import org.springframework.data.redis.connection.RedisNode
 import org.springframework.data.redis.connection.RedisSentinelConfiguration
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory
 import org.springframework.data.redis.core.RedisTemplate
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer
 import org.springframework.data.redis.serializer.RedisSerializer
 import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration
-import org.springframework.session.web.http.*
 import redis.clients.jedis.JedisPoolConfig
 import redis.clients.jedis.JedisShardInfo
+
+import javax.annotation.PostConstruct
+import java.util.logging.Logger
 
 /**
  * @author Jitendra Singh
  */
 @Configuration
-public class RedisSpringSessionConfig extends RedisHttpSessionConfiguration {
+public class RedisStoreSessionConfig extends RedisHttpSessionConfiguration {
 
-    RedisConfigProperties properties
+    RedisStoreConfigProperties properties
+    GrailsApplication grailsApplication
+    private final Serializer defaultSerializer
+    private Logger logger = Logger.getLogger(RedisStoreSessionConfig.class.name)
 
-    public RedisSpringSessionConfig(ConfigObject config) {
-        this.properties = new RedisConfigProperties(config)
+    public RedisStoreSessionConfig(GrailsApplication grailsApplication, ConfigObject config) {
+        this.grailsApplication = grailsApplication
+        this.properties = new RedisStoreConfigProperties(config)
+        defaultSerializer = config.defaultSerializer ?: Serializer.JDK
+
+        int maxInactiveInterval = config.maxInactiveInterval ?: 1800
+        setMaxInactiveIntervalInSeconds(maxInactiveInterval)
     }
 
     protected MasterNamedNode masterNamedNode(String name) {
@@ -72,6 +92,7 @@ public class RedisSpringSessionConfig extends RedisHttpSessionConfiguration {
             connectionFactory.convertPipelineAndTxResults = properties.convertPipelineAndTxResults
         }
         connectionFactory.usePool = properties.usePool
+        connectionFactory.afterPropertiesSet()
         return connectionFactory
     }
 
@@ -85,21 +106,20 @@ public class RedisSpringSessionConfig extends RedisHttpSessionConfiguration {
     }
 
     @Bean
-    public HttpSessionStrategy httpSessionStrategy() {
-        if (properties.sessionStrategy == SessionStrategy.HEADER) {
-            HeaderHttpSessionStrategy sessionStrategy = new HeaderHttpSessionStrategy()
-            sessionStrategy.setHeaderName(properties.sessionHeaderName)
-            return sessionStrategy
-        } else {
-            CookieSerializer cookieSerializer = new DefaultCookieSerializer()
-            cookieSerializer.setDomainName(properties.sessionCookieName)
-            CookieHttpSessionStrategy sessionStrategy = new CookieHttpSessionStrategy()
-            sessionStrategy.setCookieSerializer(cookieSerializer)
-        }
+    public NoOpConfigureRedisAction configureRedisAction() {
+        return new NoOpConfigureRedisAction()
     }
 
     @Bean
-    public NoOpConfigureRedisAction configureRedisAction() {
-        return new NoOpConfigureRedisAction()
+    public RedisSerializer<? extends Object> springSessionDefaultRedisSerializer() {
+        switch (defaultSerializer) {
+            case Serializer.JSON:
+                Jackson2JsonRedisSerializer serializer = new Jackson2JsonRedisSerializer<Object>(Object.class)
+                serializer.setObjectMapper(ApplicationUtils.objectMapper())
+                return serializer
+                break
+            default:
+                return new GrailsJdkSerializationRedisSerializer(grailsApplication);
+        }
     }
 }
