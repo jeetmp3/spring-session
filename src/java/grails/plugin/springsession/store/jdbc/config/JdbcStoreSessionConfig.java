@@ -7,6 +7,7 @@ import grails.plugin.springsession.store.jdbc.convertor.Jackson2Serializer;
 import groovy.util.ConfigObject;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.codehaus.groovy.grails.commons.GrailsApplication;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.ConversionService;
@@ -14,6 +15,7 @@ import org.springframework.core.convert.support.GenericConversionService;
 import org.springframework.core.serializer.Deserializer;
 import org.springframework.core.serializer.support.DeserializingConverter;
 import org.springframework.core.serializer.support.SerializingConverter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.session.jdbc.config.annotation.web.http.JdbcHttpSessionConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -41,6 +43,11 @@ public class JdbcStoreSessionConfig extends JdbcHttpSessionConfiguration {
     }
 
     @Bean
+    public JdbcTemplate springSessionJdbcOperations(@Qualifier("springSessionDataSource") DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+    @Bean
     public DataSource springSessionDataSource () {
         BasicDataSource basicDataSource = new BasicDataSource();
         System.out.println(jdbcConfigProperties);
@@ -60,7 +67,7 @@ public class JdbcStoreSessionConfig extends JdbcHttpSessionConfiguration {
     }
 
     @Bean
-    public PlatformTransactionManager platformTransactionManager(DataSource dataSource) {
+    public PlatformTransactionManager platformTransactionManager(@Qualifier("springSessionDataSource") DataSource dataSource) {
         return new DataSourceTransactionManager(dataSource);
     }
 
