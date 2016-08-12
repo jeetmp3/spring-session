@@ -7,5 +7,6 @@ public enum SessionStore {
     REDIS,
     MONGO,
     JDBC,
-    GEM_FIRE
+    GEM_FIRE,
+    HAZELCAST
 }

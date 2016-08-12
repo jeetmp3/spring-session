@@ -21,6 +21,7 @@ grails.project.dependency.resolution = {
         compile('redis.clients:jedis:2.5.2')
 
         provided('com.h2database:h2:1.4.191')
+        provided('com.hazelcast:hazelcast-client:3.5')
     }
 
     plugins {

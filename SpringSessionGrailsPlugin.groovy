@@ -1,5 +1,6 @@
 import grails.plugin.springsession.config.SpringSessionConfig
 import grails.plugin.springsession.enums.SessionStore
+import grails.plugin.springsession.store.hazelcast.config.HazelcastStoreSessionConfig
 import grails.plugin.springsession.store.jdbc.config.JdbcStoreSessionConfig
 import grails.plugin.springsession.store.mongo.config.MongoStoreSessionConfig
 import grails.plugin.springsession.store.mongo.config.MongoStoreSpringDataConfig
@@ -7,6 +8,7 @@ import grails.plugin.springsession.store.redis.config.RedisStoreSessionConfig
 import grails.plugin.webxml.FilterManager
 import grails.util.Environment
 import org.codehaus.groovy.grails.commons.GrailsApplication
+import org.springframework.session.hazelcast.config.annotation.web.http.HazelcastHttpSessionConfiguration
 import org.springframework.web.filter.DelegatingFilterProxy
 
 class SpringSessionGrailsPlugin {
@@ -83,6 +85,9 @@ class SpringSessionGrailsPlugin {
             case SessionStore.MONGO:
                 mongoSpringDataConfig(MongoStoreSpringDataConfig, config)
                 sessionStoreConfiguration(MongoStoreSessionConfig, ref("grailsApplication"), config)
+                break;
+            case SessionStore.HAZELCAST:
+                sessionStoreConfiguration(HazelcastStoreSessionConfig, ref("grailsApplication"), config)
                 break;
             default:
                 sessionStoreConfiguration(RedisStoreSessionConfig, ref("grailsApplication"), config)
