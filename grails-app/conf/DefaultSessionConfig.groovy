@@ -16,6 +16,12 @@ springsession {
     }
     allow.persist.mutable = false
 
+    websocket {
+        stompEndpoints = []
+        appDestinationPrefix = []
+        simpleBrokers = []
+    }
+
     redis {
         connectionFactory {
             hostName = "localhost"
