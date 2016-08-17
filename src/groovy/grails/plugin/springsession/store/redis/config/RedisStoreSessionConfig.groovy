@@ -1,9 +1,5 @@
 package grails.plugin.springsession.store.redis.config
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.SerializationFeature
-import grails.plugin.springsession.config.SpringSessionConfig
 import grails.plugin.springsession.converters.GrailsJdkSerializationRedisSerializer
 import grails.plugin.springsession.enums.Serializer
 import grails.plugin.springsession.redis.config.MasterNamedNode
@@ -23,7 +19,6 @@ import org.springframework.session.data.redis.config.annotation.web.http.RedisHt
 import redis.clients.jedis.JedisPoolConfig
 import redis.clients.jedis.JedisShardInfo
 
-import javax.annotation.PostConstruct
 import java.util.logging.Logger
 
 /**

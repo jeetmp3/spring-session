@@ -18,20 +18,20 @@ class JdbcConfigurationSpec extends IntegrationSpec {
     DataSource dataSource
     def transactionManager
 
-    def "jdbcSessionRepository must present"() {
-
-        expect:
-        springSessionConversionService
-        springSessionConversionService instanceof GenericConversionService
-        sessionRepository
-        dataSource
-        transactionManager
-    }
-
-    def "session must be created"() {
-        ExpiringSession session = sessionRepository.createSession()
-        expect:
-        session
-        session.maxInactiveIntervalInSeconds == grailsApplication.config.springsession.maxInactiveInterval
-    }
+//    def "jdbcSessionRepository must present"() {
+//
+//        expect:
+//        springSessionConversionService
+//        springSessionConversionService instanceof GenericConversionService
+//        sessionRepository
+//        dataSource
+//        transactionManager
+//    }
+//
+//    def "session must be created"() {
+//        ExpiringSession session = sessionRepository.createSession()
+//        expect:
+//        session
+//        session.maxInactiveIntervalInSeconds == grailsApplication.config.springsession.maxInactiveInterval
+//    }
 }
