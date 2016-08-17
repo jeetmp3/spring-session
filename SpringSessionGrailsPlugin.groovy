@@ -1,4 +1,5 @@
 import grails.plugin.springsession.config.SpringSessionConfig
+import grails.plugin.springsession.config.WebSocketSessionConfig
 import grails.plugin.springsession.enums.SessionStore
 import grails.plugin.springsession.store.hazelcast.config.HazelcastStoreSessionConfig
 import grails.plugin.springsession.store.jdbc.config.JdbcStoreSessionConfig
@@ -75,6 +76,10 @@ class SpringSessionGrailsPlugin {
 
         ConfigObject config = application.config.springsession
         SessionStore sessionStore = config.sessionStore ?: SessionStore.REDIS
+
+        if(config.websocket.stompEndpoints || config.websocket.appDestinationPrefix || config.websocket.simpleBrokers) {
+            webSocketSessionConfig(WebSocketSessionConfig, config)
+        }
 
         springSessionConfig(SpringSessionConfig, ref("grailsApplication"), config) {}
 
