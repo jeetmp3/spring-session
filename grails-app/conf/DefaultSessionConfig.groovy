@@ -7,7 +7,7 @@ import java.sql.Connection
 
 springsession {
     maxInactiveInterval = 1800
-    sessionStore = SessionStore.JDBC
+    sessionStore = SessionStore.REDIS
     defaultSerializer = Serializer.JDK
     strategy {
         defaultStrategy = SessionStrategy.COOKIE

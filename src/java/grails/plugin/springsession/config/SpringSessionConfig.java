@@ -1,12 +1,8 @@
 package grails.plugin.springsession.config;
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import grails.plugin.springsession.enums.SessionStrategy;
 import grails.plugin.springsession.web.http.HttpSessionSynchronizer;
 import groovy.util.ConfigObject;
-import org.codehaus.groovy.grails.commons.GrailsApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -26,13 +22,9 @@ public class SpringSessionConfig {
 
     private Logger logger = Logger.getLogger(SpringSessionConfig.class.getName());
 
-    GrailsApplication grailsApplication;
-    ConfigObject config;
-    SpringSessionConfigProperties configProperties;
+    private SpringSessionConfigProperties configProperties;
 
-    public SpringSessionConfig(GrailsApplication grailsApplication, ConfigObject config) {
-        this.grailsApplication = grailsApplication;
-        this.config = config;
+    public SpringSessionConfig(ConfigObject config) {
         this.configProperties = new SpringSessionConfigProperties(config);
     }
 

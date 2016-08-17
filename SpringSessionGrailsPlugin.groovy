@@ -9,7 +9,6 @@ import grails.plugin.springsession.store.redis.config.RedisStoreSessionConfig
 import grails.plugin.webxml.FilterManager
 import grails.util.Environment
 import org.codehaus.groovy.grails.commons.GrailsApplication
-import org.springframework.session.hazelcast.config.annotation.web.http.HazelcastHttpSessionConfiguration
 import org.springframework.web.filter.DelegatingFilterProxy
 
 class SpringSessionGrailsPlugin {
@@ -81,7 +80,7 @@ class SpringSessionGrailsPlugin {
             webSocketSessionConfig(WebSocketSessionConfig, config)
         }
 
-        springSessionConfig(SpringSessionConfig, ref("grailsApplication"), config) {}
+        springSessionConfig(SpringSessionConfig, config) {}
 
         switch (sessionStore) {
             case SessionStore.JDBC:
