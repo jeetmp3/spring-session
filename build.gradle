@@ -1,7 +1,4 @@
 buildscript {
-    ext {
-        grailsVersion = project.grailsVersion
-    }
     repositories {
         mavenLocal()
         maven { url "https://repo.grails.org/grails/core" }
@@ -18,11 +15,6 @@ apply plugin:"eclipse"
 apply plugin:"idea"
 apply plugin:"org.grails.grails-plugin"
 apply plugin:"org.grails.grails-plugin-publish"
-
-ext {
-    grailsVersion = project.grailsVersion
-    gradleWrapperVersion = project.gradleWrapperVersion
-}
 
 repositories {
     mavenLocal()
@@ -52,14 +44,16 @@ dependencies {
 
     testRuntime 'org.seleniumhq.selenium:selenium-chrome-driver:2.44.0'
 
-    compile('org.springframework.session:spring-session:1.0.2.RELEASE')
-    compile('org.springframework.data:spring-data-redis:1.4.2.RELEASE')
-    compile('redis.clients:jedis:2.5.2')
+    compile "org.springframework.session:spring-session:1.2.2.RELEASE"
+    compile "org.springframework.data:spring-data-redis:1.7.4.RELEASE"
+
+    compile "redis.clients:jedis:2.9.0"
 }
 
 task wrapper(type: Wrapper) {
     gradleVersion = gradleWrapperVersion
 }
+
 grailsPublish {
     // TODO: Provide values here
     githubSlug = 'jeetmp3/spring-session'

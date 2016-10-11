@@ -1,5 +1,5 @@
 springsession {
-    maxInactiveInterval = 1800
+    maxInactiveIntervalInSeconds = 1800
     redis {
         connectionFactory {
             hostName = "localhost"
