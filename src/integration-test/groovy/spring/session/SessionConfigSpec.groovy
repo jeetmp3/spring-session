@@ -27,6 +27,6 @@ class SessionConfigSpec extends Specification {
 
     void "Check http session timeout"() {
         expect:
-            sessionRepository.properties.defaultMaxInactiveIntervalInSeconds == 1800
+            sessionRepository.properties.defaultMaxInactiveInterval == 1800
     }
 }
