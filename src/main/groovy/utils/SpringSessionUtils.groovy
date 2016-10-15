@@ -10,14 +10,14 @@ import static org.springframework.util.ObjectUtils.isEmpty
 
 class SpringSessionUtils {
 
-    public static GrailsApplication application;
-    protected static ConfigObject config;
+    public static GrailsApplication application
+    protected static ConfigObject config
 
-    public static ConfigObject getSessionConfig() {
+    static ConfigObject getSessionConfig() {
         if(isEmpty(config)) {
-            loadConfig((application.config.springsession ?: new ConfigObject()) as ConfigObject);
+            loadConfig((application.config.springsession ?: new ConfigObject()) as ConfigObject)
         }
-        return (config);
+        return (config)
     }
 
     private static void loadConfig(ConfigObject currentConfig) {

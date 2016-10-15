@@ -49,13 +49,13 @@ class SessionPluginSpec extends GebSpec {
         go '/springSessionDemo/getFinalValue?name=name'
 
         then: " Value must be the updated one"
-        $().text() == "Value1"
+        $().text() == "Value2"
     }
 
     void "test session timeout" () {
         setup: "Setting default session timeout to 5 seconds"
         ConfigObject configObject = new ConfigObject()
-        configObject.maxInactiveInterval = 2
+        configObject.maxInactiveIntervalInSeconds = 2
         setMutableUpdateTrue(configObject)
 
         when: 'setting the key first and then accessing it after 6 seconds'
