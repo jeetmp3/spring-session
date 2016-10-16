@@ -17,15 +17,15 @@ import java.util.logging.Logger;
 /**
  * @author Jitendra Singh
  */
-@Configuration
+@Configuration("springSessionConfig")
 public class SpringSessionConfig {
 
     private Logger logger = Logger.getLogger(SpringSessionConfig.class.getName());
 
-    private SpringSessionConfigProperties configProperties;
+    private SpringSessionConfigProperties sessionConfigProperties;
 
     public SpringSessionConfig(ConfigObject config) {
-        this.configProperties = new SpringSessionConfigProperties(config);
+        this.sessionConfigProperties = SpringSessionConfigProperties.getInstance(config);
     }
 
     @Bean
@@ -36,22 +36,26 @@ public class SpringSessionConfig {
     @Bean
     public HttpSessionSynchronizer httpSessionSynchronizer() {
         HttpSessionSynchronizer synchronizer = new HttpSessionSynchronizer();
-        synchronizer.setPersistMutable(configProperties.getAllowPersistMutable());
+        synchronizer.setPersistMutable(sessionConfigProperties.getAllowPersistMutable());
         return synchronizer;
     }
 
     @Bean
     public HttpSessionStrategy httpSessionStrategy() {
-        if (configProperties.getDefaultSessionStrategy() == SessionStrategy.HEADER) {
+        if (sessionConfigProperties.getDefaultSessionStrategy() == SessionStrategy.HEADER) {
             HeaderHttpSessionStrategy sessionStrategy = new HeaderHttpSessionStrategy();
-            sessionStrategy.setHeaderName(configProperties.getHttpHeaderName());
+            sessionStrategy.setHeaderName(sessionConfigProperties.getHttpHeaderName());
             return sessionStrategy;
         } else {
             DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
-            cookieSerializer.setCookieName(configProperties.getCookieName());
+            cookieSerializer.setCookieName(sessionConfigProperties.getCookieName());
             CookieHttpSessionStrategy sessionStrategy = new CookieHttpSessionStrategy();
             sessionStrategy.setCookieSerializer(cookieSerializer);
             return sessionStrategy;
         }
+    }
+
+    public SpringSessionConfigProperties getSessionConfigProperties() {
+        return sessionConfigProperties;
     }
 }

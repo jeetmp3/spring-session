@@ -16,3 +16,4 @@ classes/
 /web-app
 *.class
 *.class*
+.slcache/

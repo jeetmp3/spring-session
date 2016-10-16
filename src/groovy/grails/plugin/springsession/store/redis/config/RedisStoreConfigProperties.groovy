@@ -18,9 +18,7 @@ class RedisStoreConfigProperties {
     boolean usePool
     int dbIndex
     boolean convertPipelineAndTxResults
-    SessionStrategy sessionStrategy
-    String sessionHeaderName
-    String sessionCookieName
+    List<String> jacksonModules
 
     public RedisStoreConfigProperties(ConfigObject conf) {
         sentinalNodes = conf.redis.sentinel.nodes as List<Map>
@@ -33,9 +31,8 @@ class RedisStoreConfigProperties {
         timeout = conf.redis.sentinel.timeout ?: 5000
         dbIndex = conf.redis.connectionFactory.dbIndex
         convertPipelineAndTxResults = conf.redis.connectionFactory.convertPipelineAndTxResults
-        sessionStrategy = conf.strategy.defaultStrategy ?: SessionStrategy.COOKIE
-        sessionHeaderName = conf.strategy.httpHeader.headerName
-        sessionCookieName = conf.strategy.cookie.name
+        if(conf.redis.jackson.modules && conf.redis.jackson.modules instanceof List)
+            jacksonModules = conf.redis.jackson.modules
     }
 
 }

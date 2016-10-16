@@ -4,9 +4,12 @@ import grails.plugin.springsession.config.SpringSessionConfigProperties;
 import grails.plugin.springsession.converters.JdkDeserializer;
 import grails.plugin.springsession.store.jdbc.convertor.Jackson2Deserializer;
 import grails.plugin.springsession.store.jdbc.convertor.Jackson2Serializer;
+import grails.plugin.springsession.utils.Objects;
 import groovy.util.ConfigObject;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.codehaus.groovy.grails.commons.GrailsApplication;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,21 +37,30 @@ public class JdbcStoreSessionConfig extends JdbcHttpSessionConfiguration {
     private final SpringSessionConfigProperties configProperties;
     private final GrailsApplication grailsApplication;
 
+    @Autowired
+    @Qualifier("dataSource")
+    private DataSource appDataSource;
+
     public JdbcStoreSessionConfig(GrailsApplication grailsApplication, ConfigObject config) {
         jdbcConfigProperties = new JdbcStoreConfigProperties(config);
-        configProperties = new SpringSessionConfigProperties(config);
+        configProperties = SpringSessionConfigProperties.getInstance(config);
         setTableName(jdbcConfigProperties.getTableName());
         setMaxInactiveIntervalInSeconds(configProperties.getMaxInactiveInterval());
         this.grailsApplication = grailsApplication;
     }
 
     @Bean
-    public JdbcTemplate springSessionJdbcOperations(@Qualifier("springSessionDataSource") DataSource dataSource) {
-        return new JdbcTemplate(dataSource);
+    public JdbcTemplate springSessionJdbcOperations() {
+        if(jdbcConfigProperties.isUseAppDataSource()) {
+            if(Objects.isNull(appDataSource)) {
+                throw new NoSuchBeanDefinitionException("dataSource");
+            }
+            return new JdbcTemplate(appDataSource);
+        }
+        return new JdbcTemplate(springSessionDataSource());
     }
 
-    @Bean
-    public DataSource springSessionDataSource () {
+    protected DataSource springSessionDataSource () {
         BasicDataSource basicDataSource = new BasicDataSource();
         System.out.println(jdbcConfigProperties);
         basicDataSource.setDriverClassName(jdbcConfigProperties.getDriverClassName());

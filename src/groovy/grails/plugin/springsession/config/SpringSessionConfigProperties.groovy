@@ -17,8 +17,17 @@ class SpringSessionConfigProperties {
     String httpHeaderName
     Boolean allowPersistMutable
 
-    public SpringSessionConfigProperties(ConfigObject config) {
-        maxInactiveInterval = config.maxInactiveInterval ?: 1800
+    private static SpringSessionConfigProperties configProperties;
+
+    public static synchronized SpringSessionConfigProperties getInstance(ConfigObject config) {
+        if (configProperties == null) {
+            configProperties = new SpringSessionConfigProperties(config)
+        }
+        return configProperties
+    }
+
+    private SpringSessionConfigProperties(ConfigObject config) {
+        maxInactiveInterval = config.maxInactiveIntervalInSeconds ?: 1800
         sessionStore = config.sessionStore ?: SessionStore.REDIS
         defaultSerializer = config.defaultSerializer ?: Serializer.JDK
         defaultSessionStrategy = config.strategy.defaultStrategy ?: SessionStrategy.COOKIE

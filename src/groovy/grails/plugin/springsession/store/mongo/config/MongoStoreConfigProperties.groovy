@@ -1,5 +1,6 @@
 package grails.plugin.springsession.store.mongo.config
 
+import grails.plugin.springsession.utils.Objects
 import org.springframework.session.data.mongo.MongoOperationsSessionRepository
 
 /**
@@ -29,8 +30,14 @@ class MongoStoreConfigProperties {
         collectionName = config.mongo.collectionName ?: MongoOperationsSessionRepository.DEFAULT_COLLECTION_NAME
         if(config.mongo.jackson.modules && config.mongo.jackson.modules instanceof List)
             jacksonModules = config.mongo.jackson.modules
-        if (config.mongo.replicaSet instanceof List)
-            replicaSets = config.mongo.replicaSet as List<ReplicaSet>
+        if (config.mongo.replicaSet instanceof List) {
+            replicaSets = []
+            (config.mongo.replicaSet as List).each {
+                if(!Objects.isEmpty(it.hostName as String) && !Objects.isEmpty(!Objects.isEmpty(it.hostName))) {
+                    replicaSets.add(new ReplicaSet(hostName: it.hostName as String, port: it.port as Integer))
+                }
+            }
+        }
     }
 
     public class ReplicaSet {

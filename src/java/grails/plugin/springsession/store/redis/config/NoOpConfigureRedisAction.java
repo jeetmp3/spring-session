@@ -1,4 +1,4 @@
-package grails.plugin.springsession.redis.config;
+package grails.plugin.springsession.store.redis.config;
 
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.session.data.redis.config.ConfigureRedisAction;

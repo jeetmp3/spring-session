@@ -7,6 +7,7 @@ import java.sql.Connection
  */
 class JdbcStoreConfigProperties {
 
+    boolean useAppDataSource
     String driverClassName
     String url
     String username
@@ -23,6 +24,7 @@ class JdbcStoreConfigProperties {
     String validationQuery
 
     public JdbcStoreConfigProperties(ConfigObject config) {
+        useAppDataSource = config.jdbc.useAppDataSource ?: false
         driverClassName = config.jdbc.driverClassName ?: "org.h2.Driver"
         url = config.jdbc.url ?: "jdbc:h2:~/test"
         username = config.jdbc.username ?: ""
