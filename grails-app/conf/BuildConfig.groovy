@@ -19,7 +19,7 @@ grails.project.dependency.resolution = {
         compile('com.fasterxml.jackson.core:jackson-databind:2.8.1')
         compile('org.apache.commons:commons-dbcp2:2.0')
         compile('redis.clients:jedis:2.5.2')
-        compile('com.hazelcast:hazelcast-client:3.5')
+//        compile('com.hazelcast:hazelcast-client:3.5')
 
         compile('org.springframework:spring-websocket:4.0.5.RELEASE')
         compile('org.springframework:spring-messaging:4.0.5.RELEASE')
