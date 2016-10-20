@@ -59,7 +59,6 @@ springsession {
     }
 
     jdbc {
-        useAppDataSource = true
         driverClassName = "org.h2.Driver"
         url = "jdbc:h2:~/test"
         username = ""
