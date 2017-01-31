@@ -1,6 +1,8 @@
 # Grails 3
 The [2.X version of the plugin](https://bintray.com/jeetmp3/plugins/spring-session/view) is compatible only with grails 3.
 
+<h4><a href='https://goo.gl/VmI8yQ' target='_blank'>Grails 2.x Documentation</a></h4>
+
 # spring-session-grails-plugin
 This plugin provides [spring-session](http://projects.spring.io/spring-session) support in grails application.  SpringSession provides nice features:
 * HttpSession
