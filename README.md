@@ -1,3 +1,5 @@
+<h4><a href='https://goo.gl/VmI8yQ' target='_blank'>Grails 2.x Documentation</a></h4>
+
 # spring-session-grails-plugin
 This plugin provides [spring-session](http://projects.spring.io/spring-session) support in grails application.  SpringSession provides nice features:
 * HttpSession
