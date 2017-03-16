@@ -4,6 +4,7 @@ springsession {
         connectionFactory {
             hostName = "localhost"
             port = 6379
+            password = null
             timeout = 2000
             usePool = true
             dbIndex = 0
@@ -24,7 +25,10 @@ springsession {
     strategy {
         defaultStrategy = "COOKIE"
         cookie.name = "SESSION"
+        cookie.path = "/"
+        cookie.domainNamePattern = '^.+?\\.(\\w+\\.[a-z]+)$'
         httpHeader.headerName = "x-auth-token"
     }
+    isolate.securityContext = false
     allow.persist.mutable = false
 }

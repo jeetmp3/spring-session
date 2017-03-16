@@ -1,4 +1,4 @@
-import grails.test.spock.IntegrationSpec
+import grails.plugin.spock.IntegrationSpec
 import org.codehaus.groovy.grails.commons.GrailsApplication
 
 /**

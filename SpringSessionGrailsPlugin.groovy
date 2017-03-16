@@ -1,4 +1,7 @@
 import grails.plugin.springsession.converters.GrailsJdkSerializationRedisSerializer
+import grails.plugin.springsession.data.redis.RedisLogoutHandler
+import grails.plugin.springsession.data.redis.RedisSecurityContextRepository
+import grails.plugin.springsession.data.redis.SecurityContextDao
 import grails.plugin.springsession.data.redis.config.MasterNamedNode
 import grails.plugin.springsession.data.redis.config.NoOpConfigureRedisAction
 import grails.plugin.springsession.web.http.HttpSessionSynchronizer
@@ -10,24 +13,26 @@ import org.springframework.data.redis.connection.RedisSentinelConfiguration
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.serializer.StringRedisSerializer
+import org.springframework.security.web.context.SecurityContextPersistenceFilter
 import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration
 import org.springframework.session.web.http.CookieHttpSessionStrategy
+import org.springframework.session.web.http.DefaultCookieSerializer
 import org.springframework.session.web.http.HeaderHttpSessionStrategy
 import org.springframework.web.filter.DelegatingFilterProxy
 import redis.clients.jedis.JedisPoolConfig
 import redis.clients.jedis.JedisShardInfo
 
 class SpringSessionGrailsPlugin {
-    def version = "1.2"
-    def grailsVersion = "2.4 > *"
+    def version = "1.4-SNAPSHOT"
+    def grailsVersion = "2.2.4 > *"
     def title = "Spring Session Grails Plugin"
     def author = "Jitendra Singh"
     def authorEmail = "jeet.mp3@gmail.com"
     def description = 'Provides support for SpringSession project'
-    def documentation = "https://github.com/jeetmp3/spring-session"
+    def documentation = "https://github.com/zgsolucoes/spring-session"
     def license = "APACHE"
-    def issueManagement = [url: "https://github.com/jeetmp3/spring-session/issues"]
-    def scm = [url: "https://github.com/jeetmp3/spring-session"]
+    def issueManagement = [url: "https://github.com/zgsolucoes/spring-session/issues"]
+    def scm = [url: "https://github.com/zgsolucoes/spring-session"]
     def loadAfter = ['springSecurityCore', 'cors']
 
     def getWebXmlFilterOrder() {
@@ -76,7 +81,7 @@ class SpringSessionGrailsPlugin {
     }
 
     def doWithSpring = {
-        println "\n++++++ Configuring Spring session"
+        println "\nConfiguring Spring session..."
         mergeConfig(application)
         ConfigObject conf = application.config.springsession
 
@@ -132,8 +137,14 @@ class SpringSessionGrailsPlugin {
                 headerName = conf.strategy.httpHeader.headerName
             }
         } else {
-            httpSessionStrategy(CookieHttpSessionStrategy) {
+            cookieSerializer(DefaultCookieSerializer){
                 cookieName = conf.strategy.cookie.name
+                cookiePath = conf.strategy.cookie.path
+                domainNamePattern = conf.strategy.cookie.domainNamePattern
+            }
+
+            httpSessionStrategy(CookieHttpSessionStrategy) {
+                cookieSerializer = ref("cookieSerializer")
             }
         }
 
@@ -147,7 +158,32 @@ class SpringSessionGrailsPlugin {
             persistMutable = conf.allow.persist.mutable as Boolean
         }
 
-        println "++++++ Finished Spring Session configuration"
+        if(conf.isolate.securityContext as Boolean){
+            securityContextDao(SecurityContextDao){
+                redisTemplate = ref("sessionRedisTemplate")
+            }
+
+            redisSecurityContextRepository(RedisSecurityContextRepository){
+                securityContextDao = ref("securityContextDao")
+            }
+
+            redisLogoutHandler(RedisLogoutHandler){
+                redisSecurityContextRepository = ref("redisSecurityContextRepository")
+            }
+
+            securityContextPersistenceFilter(SecurityContextPersistenceFilter){
+                securityContextRepository = ref("redisSecurityContextRepository")
+            }
+        }
+
+        println "... finished configuring Spring Session"
+    }
+
+    def doWithApplicationContext = { applicationContext ->
+        RedisLogoutHandler redisLogoutHandler = applicationContext.getBean("redisLogoutHandler")
+        if(redisLogoutHandler != null){
+            applicationContext.logoutHandlers.add(0, redisLogoutHandler)
+        }
     }
 
     def configureRedis = { ConfigObject conf ->
