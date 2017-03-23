@@ -1,4 +1,7 @@
+import grails.plugin.springsession.SessionProxy
+import grails.plugin.springsession.SpringHttpSession
 import grails.plugin.springsession.converters.GrailsJdkSerializationRedisSerializer
+import grails.plugin.springsession.converters.LazyDeserializationRedisSerializer
 import grails.plugin.springsession.data.redis.RedisLogoutHandler
 import grails.plugin.springsession.data.redis.RedisSecurityContextRepository
 import grails.plugin.springsession.data.redis.SecurityContextDao
@@ -8,12 +11,14 @@ import grails.plugin.springsession.web.http.HttpSessionSynchronizer
 import grails.plugin.webxml.FilterManager
 import grails.util.Environment
 import org.codehaus.groovy.grails.commons.GrailsApplication
+import org.springframework.beans.BeansException
 import org.springframework.data.redis.connection.RedisNode
 import org.springframework.data.redis.connection.RedisSentinelConfiguration
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.data.redis.serializer.StringRedisSerializer
 import org.springframework.security.web.context.SecurityContextPersistenceFilter
+import org.springframework.session.data.redis.RedisFlushMode
 import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration
 import org.springframework.session.web.http.CookieHttpSessionStrategy
 import org.springframework.session.web.http.DefaultCookieSerializer
@@ -81,108 +86,129 @@ class SpringSessionGrailsPlugin {
     }
 
     def doWithSpring = {
-        println "\nConfiguring Spring session..."
         mergeConfig(application)
         ConfigObject conf = application.config.springsession
 
-        // JDK Serializer bean
-        jdkSerializationRedisSerializer(GrailsJdkSerializationRedisSerializer, ref('grailsApplication'))
-        stringRedisSerializer(StringRedisSerializer)
+        if(conf.enabled as Boolean){
+            println "\nConfiguring Spring Session..."
 
-        poolConfig(JedisPoolConfig) {}
-        if (conf.redis.sentinel.master && conf.redis.sentinel.nodes) {
-            List<Map> nodes = conf.redis.sentinel.nodes as List<Map>
-            masterName(MasterNamedNode) {
-                name = conf.redis.sentinel.master
-            }
-            shardInfo(JedisShardInfo, conf.redis.connectionFactory.hostName, conf.redis.connectionFactory.port) {
-                password = conf.redis.sentinel.password ?: null
-                timeout = conf.redis.sentinel.timeout ?: 5000
-            }
-            redisSentinelConfiguration(RedisSentinelConfiguration) {
-                master = ref("masterName")
-                sentinels = (nodes.collect { new RedisNode(it.host as String, it.port as Integer) }) as Set
-            }
-            redisConnectionFactory(JedisConnectionFactory, ref("redisSentinelConfiguration"), ref("poolConfig")) {
-                shardInfo = ref("shardInfo")
-                usePool = conf.redis.connectionFactory.usePool
-            }
-        } else {
-            // Redis Connection Factory Default is JedisConnectionFactory
-            redisConnectionFactory(JedisConnectionFactory) {
-                hostName = conf.redis.connectionFactory.hostName ?: "localhost"
-                port = conf.redis.connectionFactory.port ?: 6379
-                timeout = conf.redis.connectionFactory.timeout ?: 2000
-                usePool = conf.redis.connectionFactory.usePool
-                database = conf.redis.connectionFactory.dbIndex
-                poolConfig = ref("poolConfig")
-                if (conf.redis.connectionFactory.password) {
-                    password = conf.redis.connectionFactory.password
+            // JDK Serializer bean
+            jdkSerializationRedisSerializer(GrailsJdkSerializationRedisSerializer, ref('grailsApplication'))
+            lazyDeserializationRedisSerializer(LazyDeserializationRedisSerializer, ref('grailsApplication'))
+            stringRedisSerializer(StringRedisSerializer)
+
+            poolConfig(JedisPoolConfig) {}
+            if (conf.redis.sentinel.master && conf.redis.sentinel.nodes) {
+                List<Map> nodes = conf.redis.sentinel.nodes as List<Map>
+                masterName(MasterNamedNode) {
+                    name = conf.redis.sentinel.master
                 }
-                convertPipelineAndTxResults = conf.redis.connectionFactory.convertPipelineAndTxResults
+                shardInfo(JedisShardInfo, conf.redis.connectionFactory.hostName, conf.redis.connectionFactory.port) {
+                    password = conf.redis.sentinel.password ?: null
+                    timeout = conf.redis.sentinel.timeout ?: 5000
+                }
+                redisSentinelConfiguration(RedisSentinelConfiguration) {
+                    master = ref("masterName")
+                    sentinels = (nodes.collect { new RedisNode(it.host as String, it.port as Integer) }) as Set
+                }
+                redisConnectionFactory(JedisConnectionFactory, ref("redisSentinelConfiguration"), ref("poolConfig")) {
+                    shardInfo = ref("shardInfo")
+                    usePool = conf.redis.connectionFactory.usePool
+                }
+            } else {
+                // Redis Connection Factory Default is JedisConnectionFactory
+                redisConnectionFactory(JedisConnectionFactory) {
+                    hostName = conf.redis.connectionFactory.hostName ?: "localhost"
+                    port = conf.redis.connectionFactory.port ?: 6379
+                    timeout = conf.redis.connectionFactory.timeout ?: 2000
+                    usePool = conf.redis.connectionFactory.usePool
+                    database = conf.redis.connectionFactory.dbIndex
+                    poolConfig = ref("poolConfig")
+                    if (conf.redis.connectionFactory.password) {
+                        password = conf.redis.connectionFactory.password
+                    }
+                    convertPipelineAndTxResults = conf.redis.connectionFactory.convertPipelineAndTxResults
+                }
             }
+
+            sessionRedisTemplate(RedisTemplate) { bean ->
+                keySerializer = ref("stringRedisSerializer")
+                hashKeySerializer = ref("stringRedisSerializer")
+                connectionFactory = ref("redisConnectionFactory")
+                if(conf.lazy.deserialization as Boolean){
+                    defaultSerializer = ref("lazyDeserializationRedisSerializer")
+                }
+                else {
+                    defaultSerializer = ref("jdkSerializationRedisSerializer")
+                }
+                bean.initMethod = "afterPropertiesSet"
+            }
+
+            String defaultStrategy = conf.strategy.defaultStrategy
+            if (defaultStrategy == "HEADER") {
+                httpSessionStrategy(HeaderHttpSessionStrategy) {
+                    headerName = conf.strategy.httpHeader.headerName
+                }
+            } else {
+                cookieSerializer(DefaultCookieSerializer){
+                    cookieName = conf.strategy.cookie.name
+                    cookiePath = conf.strategy.cookie.path
+                    domainNamePattern = conf.strategy.cookie.domainNamePattern
+                }
+
+                httpSessionStrategy(CookieHttpSessionStrategy) {
+                    cookieSerializer = ref("cookieSerializer")
+                }
+            }
+
+            redisHttpSessionConfiguration(RedisHttpSessionConfiguration) {
+                maxInactiveIntervalInSeconds = conf.maxInactiveInterval
+                httpSessionStrategy = ref("httpSessionStrategy")
+                redisFlushMode = RedisFlushMode.ON_SAVE
+            }
+
+            configureRedisAction(NoOpConfigureRedisAction)
+            httpSessionSynchronizer(HttpSessionSynchronizer) {
+                persistMutable = conf.allow.persist.mutable as Boolean
+            }
+
+            session(SpringHttpSession){
+                lazyDeserialization = conf.lazy.deserialization as Boolean
+                redisSerializer = ref("lazyDeserializationRedisSerializer")
+                sessionProxy = new SessionProxy()
+            }
+
+            if(conf.isolate.securityContext as Boolean){
+                securityContextDao(SecurityContextDao){
+                    redisTemplate = ref("sessionRedisTemplate")
+                }
+
+                redisSecurityContextRepository(RedisSecurityContextRepository){
+                    securityContextDao = ref("securityContextDao")
+                }
+
+                redisLogoutHandler(RedisLogoutHandler){
+                    redisSecurityContextRepository = ref("redisSecurityContextRepository")
+                }
+
+                securityContextPersistenceFilter(SecurityContextPersistenceFilter){
+                    securityContextRepository = ref("redisSecurityContextRepository")
+                }
+            }
+
+            println "... finished configuring Spring Session"
         }
 
-        sessionRedisTemplate(RedisTemplate) { bean ->
-            keySerializer = ref("stringRedisSerializer")
-            hashKeySerializer = ref("stringRedisSerializer")
-            connectionFactory = ref("redisConnectionFactory")
-            defaultSerializer = ref("jdkSerializationRedisSerializer")
-            bean.initMethod = "afterPropertiesSet"
-        }
 
-        String defaultStrategy = conf.strategy.defaultStrategy
-        if (defaultStrategy == "HEADER") {
-            httpSessionStrategy(HeaderHttpSessionStrategy) {
-                headerName = conf.strategy.httpHeader.headerName
-            }
-        } else {
-            cookieSerializer(DefaultCookieSerializer){
-                cookieName = conf.strategy.cookie.name
-                cookiePath = conf.strategy.cookie.path
-                domainNamePattern = conf.strategy.cookie.domainNamePattern
-            }
-
-            httpSessionStrategy(CookieHttpSessionStrategy) {
-                cookieSerializer = ref("cookieSerializer")
-            }
-        }
-
-        redisHttpSessionConfiguration(RedisHttpSessionConfiguration) {
-            maxInactiveIntervalInSeconds = conf.maxInactiveInterval
-            httpSessionStrategy = ref("httpSessionStrategy")
-        }
-
-        configureRedisAction(NoOpConfigureRedisAction)
-        httpSessionSynchronizer(HttpSessionSynchronizer) {
-            persistMutable = conf.allow.persist.mutable as Boolean
-        }
-
-        if(conf.isolate.securityContext as Boolean){
-            securityContextDao(SecurityContextDao){
-                redisTemplate = ref("sessionRedisTemplate")
-            }
-
-            redisSecurityContextRepository(RedisSecurityContextRepository){
-                securityContextDao = ref("securityContextDao")
-            }
-
-            redisLogoutHandler(RedisLogoutHandler){
-                redisSecurityContextRepository = ref("redisSecurityContextRepository")
-            }
-
-            securityContextPersistenceFilter(SecurityContextPersistenceFilter){
-                securityContextRepository = ref("redisSecurityContextRepository")
-            }
-        }
-
-        println "... finished configuring Spring Session"
     }
 
     def doWithApplicationContext = { applicationContext ->
-        RedisLogoutHandler redisLogoutHandler = applicationContext.getBean("redisLogoutHandler")
-        if(redisLogoutHandler != null){
+        try{
+            RedisLogoutHandler redisLogoutHandler = applicationContext.getBean("redisLogoutHandler")
             applicationContext.logoutHandlers.add(0, redisLogoutHandler)
+        }
+        catch (BeansException e){
+            // Ignore
         }
     }
 

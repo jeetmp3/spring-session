@@ -1,4 +1,5 @@
 springsession {
+    enabled = true
     maxInactiveInterval = 1800
     redis {
         connectionFactory {
@@ -29,6 +30,7 @@ springsession {
         cookie.domainNamePattern = '^.+?\\.(\\w+\\.[a-z]+)$'
         httpHeader.headerName = "x-auth-token"
     }
+    lazy.deserialization = false
     isolate.securityContext = false
     allow.persist.mutable = false
 }
