@@ -1,3 +1,8 @@
+Map<String, String> ENV = System.getenv();
+String mvnRepoHostDeploy = ENV['MVN_REPO_HOST']
+String mvnRepoUserDeploy = ENV['MVN_REPO_USER']
+String mvnRepoPasswordDeploy = ENV['MVN_REPO_PASSWORD']
+
 grails.project.work.dir = 'target'
 
 grails.project.dependency.resolver = "maven"
@@ -9,6 +14,16 @@ grails.project.dependency.resolution = {
         mavenLocal()
         grailsCentral()
         mavenCentral()
+        mavenRepo ENV['MVN_REPO_REPOSITORIES_SONATYPE']
+        mavenRepo ENV['MVN_REPO_REPOSITORIES_URL_LIBS']
+        mavenRepo ENV['MVN_REPO_REPOSITORIES_GRAILS_PLUGINS']
+    }
+
+    credentials {
+        realm = ENV['MVN_REPO_REALM']
+        host = mvnRepoHostDeploy
+        username = mvnRepoUserDeploy
+        password = mvnRepoPasswordDeploy
     }
 
     dependencies {
@@ -52,3 +67,13 @@ grails.project.dependency.resolution = {
         }
     }
 }
+
+grails.project.repos.releases.url = ENV['MVN_REPO_REPOSITORIES_URL_PLUGINS_RELEASE']
+grails.project.repos.releases.username = mvnRepoUserDeploy
+grails.project.repos.releases.password = mvnRepoPasswordDeploy
+
+grails.project.repos.snapshots.url = ENV['MVN_REPO_REPOSITORIES_URL_PLUGINS_SNAPSHOT']
+grails.project.repos.snapshots.username = mvnRepoUserDeploy
+grails.project.repos.snapshots.password = mvnRepoPasswordDeploy
+
+grails.project.repos.default = 'snapshots'
