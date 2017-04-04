@@ -1,4 +1,4 @@
-import grails.plugin.springsession.SessionProxy
+import grails.plugin.springsession.GrailsSessionProxy
 import grails.plugin.springsession.SpringHttpSession
 import grails.plugin.springsession.converters.GrailsJdkSerializationRedisSerializer
 import grails.plugin.springsession.converters.LazyDeserializationRedisSerializer
@@ -93,8 +93,8 @@ class SpringSessionGrailsPlugin {
             println "\nConfiguring Spring Session..."
 
             // JDK Serializer bean
-            jdkSerializationRedisSerializer(GrailsJdkSerializationRedisSerializer, ref('grailsApplication'))
-            lazyDeserializationRedisSerializer(LazyDeserializationRedisSerializer, ref('grailsApplication'))
+            jdkSerializationRedisSerializer(GrailsJdkSerializationRedisSerializer, application.getClassLoader())
+            lazyDeserializationRedisSerializer(LazyDeserializationRedisSerializer, application.getClassLoader())
             stringRedisSerializer(StringRedisSerializer)
 
             poolConfig(JedisPoolConfig) {}
@@ -175,7 +175,7 @@ class SpringSessionGrailsPlugin {
             "${conf.beanName}"(SpringHttpSession){
                 lazyDeserialization = conf.lazy.deserialization as Boolean
                 redisSerializer = ref("lazyDeserializationRedisSerializer")
-                sessionProxy = new SessionProxy()
+                sessionProxy = new GrailsSessionProxy()
             }
 
             if(conf.isolate.securityContext as Boolean){

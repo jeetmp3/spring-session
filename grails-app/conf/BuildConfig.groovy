@@ -27,30 +27,18 @@ grails.project.dependency.resolution = {
     }
 
     dependencies {
-        compile('org.springframework.session:spring-session-data-redis:1.1.1.RELEASE') {
-            excludes([group: "org.springframework", name: "spring-context"],
+        compile('org.grails.plugins:spring-session-base:1.0-SNAPSHOT'){
+            excludes(
+                    [group: "org.springframework", name: "spring-core"],
+                    [group: "org.springframework", name: "spring-context"],
                     [group: "org.springframework", name: "spring-context-support"],
                     [group: "org.springframework", name: "spring-aop"],
-                    [group: "org.springframework", name: "spring-core"],
-                    [group: "org.springframework", name: "spring-tx"])
-        }
-
-        compile('org.springframework.security:spring-security-core:3.0.7.RELEASE') {
-            excludes([group: "org.springframework", name: "spring-context"],
-                    [group: "org.springframework", name: "spring-context-support"],
-                    [group: "org.springframework", name: "spring-aop"],
-                    [group: "org.springframework", name: "spring-core"],
                     [group: "org.springframework", name: "spring-tx"],
-                    [group: "org.springframework", name: "spring-expression"])
+                    [group: "org.springframework", name: "spring-expression"],
+                    [group: "org.springframework", name: "spring-web"],
+                    [group: "javax.servlet", name: "javax.servlet-api"]
+            )
         }
-        compile ('org.springframework.security:spring-security-web:3.0.7.RELEASE') {
-            excludes([group: "org.springframework", name: "spring-web"],
-                    [group: "org.springframework", name: "spring-core"])
-        }
-
-
-//        compile('com.fasterxml.jackson.core:jackson-core:2.6.4')
-//        compile('com.fasterxml.jackson.core:jackson-databind:2.6.4')
 
         test "org.spockframework:spock-grails-support:0.7-groovy-2.0"
     }
