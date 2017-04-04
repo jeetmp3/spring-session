@@ -172,7 +172,7 @@ class SpringSessionGrailsPlugin {
                 persistMutable = conf.allow.persist.mutable as Boolean
             }
 
-            session(SpringHttpSession){
+            "${conf.beanName}"(SpringHttpSession){
                 lazyDeserialization = conf.lazy.deserialization as Boolean
                 redisSerializer = ref("lazyDeserializationRedisSerializer")
                 sessionProxy = new SessionProxy()

@@ -1,5 +1,6 @@
 springsession {
     enabled = true
+    beanName = "springSession"
     maxInactiveInterval = 1800
     redis {
         connectionFactory {
