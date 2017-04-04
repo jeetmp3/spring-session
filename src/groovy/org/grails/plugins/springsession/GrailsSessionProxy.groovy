@@ -1,4 +1,4 @@
-package grails.plugin.springsession
+package org.grails.plugins.springsession
 
 import org.codehaus.groovy.grails.web.util.WebUtils
 
