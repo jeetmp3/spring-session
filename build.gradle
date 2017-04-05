@@ -1,0 +1,27 @@
+// Arquivo build.gradle em padrão de projeto grails
+
+apply plugin: 'maven'
+apply plugin: 'release'
+
+buildscript {
+	repositories {
+		mavenCentral()
+		mavenLocal()
+		maven {
+			url "$artifactory_contextUrl/libs-release/"
+			credentials {
+				username = artifactory_user
+				password = artifactory_password
+			}
+		}
+	}
+	dependencies {
+		classpath group: 'gradle-release', name: 'gradle-release', version: '1.4.7'
+	}
+}
+
+release {
+	ext['gradle.release.useAutomaticVersion'] = true
+}
+
+createReleaseTag.dependsOn uploadArchives
