@@ -189,7 +189,7 @@ class SpringSessionGrailsPluginSupport {
 		}
 	}
 
-	private void mergeConfig(GrailsApplication grailsApplication) {
+	private static void mergeConfig(GrailsApplication grailsApplication) {
 		ConfigSlurper configSlurper = new ConfigSlurper(Environment.current.name)
 		ConfigObject configObject = configSlurper.parse(grailsApplication.classLoader.loadClass('DefaultSessionConfig'))
 		configObject.merge(grailsApplication.config)
