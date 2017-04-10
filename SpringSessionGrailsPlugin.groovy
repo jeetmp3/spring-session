@@ -15,10 +15,10 @@ class SpringSessionGrailsPlugin {
 	def loadAfter = ['springSecurityCore', 'cors']
 
 	def getWebXmlFilterOrder() {
-		FilterManager filterManager = getClass().getClassLoader().loadClass('grails.plugin.webxml.FilterManager')
+		def FilterManager = getClass().getClassLoader().loadClass('grails.plugin.webxml.FilterManager')
 		return [
-				springSessionRepositoryFilter: filterManager.CHAR_ENCODING_POSITION - 2,
-				httpSessionSynchronizer      : filterManager.CHAR_ENCODING_POSITION - 1
+				springSessionRepositoryFilter: FilterManager.CHAR_ENCODING_POSITION - 2,
+				httpSessionSynchronizer      : FilterManager.CHAR_ENCODING_POSITION - 1
 		]
 	}
 
