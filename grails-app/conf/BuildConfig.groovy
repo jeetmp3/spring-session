@@ -27,7 +27,7 @@ grails.project.dependency.resolution = {
 	}
 
 	dependencies {
-		compile('org.grails.plugins:spring-session-base:1.0.3') {
+		compile('org.grails.plugins:spring-session-base:1.0.4-SNAPSHOT') {
 			excludes(
 					[group: "org.springframework", name: "spring-core"],
 					[group: "org.springframework", name: "spring-context"],
