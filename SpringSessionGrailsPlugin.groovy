@@ -2,7 +2,7 @@ import grails.plugin.webxml.FilterManager
 import org.grails.plugins.springsession.SpringSessionGrailsPluginSupport
 
 class SpringSessionGrailsPlugin {
-	def version = '1.4-ZG6'
+	def version = '1.4-ZG7-SNAPSHOT'
 	def grailsVersion = "2.2.4 > *"
 	def title = "Spring Session Grails Plugin"
 	def author = "Jitendra Singh"
