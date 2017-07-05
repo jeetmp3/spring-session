@@ -35,7 +35,7 @@ class SpringSessionGrailsPlugin extends Plugin {
 
     Closure doWithSpring() {
         { ->
-            println "\n++++++ Configuring Spring session"
+            log.info 'Configuring Spring session'
             SpringSessionUtils.application = grailsApplication
             ConfigObject conf = SpringSessionUtils.sessionConfig
 
@@ -94,17 +94,12 @@ class SpringSessionGrailsPlugin extends Plugin {
                 }
             }
 
-//            redisHttpSessionConfiguration(RedisHttpSessionConfiguration) {
-//                maxInactiveIntervalInSeconds = conf.maxInactiveIntervalInSeconds
-//                httpSessionStrategy = ref("httpSessionStrategy")
-//            }
-
             configureRedisAction(NoOpConfigureRedisAction)
             httpSessionSynchronizer(HttpSessionSynchronizer) {
                 persistMutable = conf.allow.persist.mutable as Boolean
             }
 
-            println "++++++ Finished Spring Session configuration"
+            log.info 'Finished Spring Session configuration'
         }
     }
 }
