@@ -1,38 +1,56 @@
 package grails.plugin.springsession.config
 
-import grails.plugin.springsession.enums.Serializer
-import grails.plugin.springsession.enums.SessionStore
-import grails.plugin.springsession.enums.SessionStrategy
+import org.springframework.core.io.ClassPathResource
+import org.springframework.core.io.Resource
 
 /**
  * @author Jitendra Singh.
  */
 class SpringSessionConfigProperties {
 
+    String tableName
+    String driverClassName
+    String url
+    String username
+    String password
+
+    int maxTotal
+    int maxActive
+    int minIdle
+    int maxWaitMillis
+    boolean defaultAutoCommit
+    boolean defaultReadOnly
+
     int maxInactiveInterval
-    SessionStore sessionStore
-    Serializer defaultSerializer = Serializer.JDK
-    SessionStrategy defaultSessionStrategy = SessionStrategy.COOKIE
     String cookieName
     String httpHeaderName
     Boolean allowPersistMutable
 
-    private static SpringSessionConfigProperties configProperties;
+    public SpringSessionConfigProperties(ConfigObject config) {
+        def jdbcConfig = config.jdbc
+        tableName = jdbcConfig.tableName
+        driverClassName = jdbcConfig.driverClassName
+        url = jdbcConfig.url
+        username = jdbcConfig.username
+        password = jdbcConfig.password
 
-    public static synchronized SpringSessionConfigProperties getInstance(ConfigObject config) {
-        if (configProperties == null) {
-            configProperties = new SpringSessionConfigProperties(config)
-        }
-        return configProperties
-    }
+        def poolConfig = jdbcConfig.pool
+        maxActive = poolConfig.maxActive
+        maxTotal = poolConfig.maxTotal
+        minIdle = poolConfig.minIdle
+        maxWaitMillis = poolConfig.maxWaitMillis
+        defaultAutoCommit = poolConfig.defaultAutoCommit
+        defaultReadOnly = poolConfig.defaultReadOnly
 
-    private SpringSessionConfigProperties(ConfigObject config) {
         maxInactiveInterval = config.maxInactiveIntervalInSeconds ?: 1800
-        sessionStore = config.sessionStore ?: SessionStore.REDIS
-        defaultSerializer = config.defaultSerializer ?: Serializer.JDK
-        defaultSessionStrategy = config.strategy.defaultStrategy ?: SessionStrategy.COOKIE
         cookieName = config.strategy.cookie.name
         httpHeaderName = config.strategy.httpHeader.headerName
         allowPersistMutable = config.allow.persist.mutable ?: false
+    }
+
+    String getDdlScript() {
+        String path = "org/springframework/session/jdbc/schema-mysql.sql";
+        Resource resource = new ClassPathResource(path);
+        resource.inputStream.text
     }
 }

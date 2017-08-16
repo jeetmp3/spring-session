@@ -18,7 +18,6 @@ public class HttpSessionSynchronizer extends OncePerRequestFilter {
 
     private Boolean persistMutable;
 
-
     @Override
     public void afterPropertiesSet() throws ServletException {
         super.afterPropertiesSet();

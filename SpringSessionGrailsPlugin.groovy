@@ -1,18 +1,10 @@
 import grails.plugin.springsession.config.SpringSessionConfig
-import grails.plugin.springsession.config.WebSocketSessionConfig
-import grails.plugin.springsession.enums.SessionStore
-import grails.plugin.springsession.store.hazelcast.config.HazelcastStoreSessionConfig
 import grails.plugin.springsession.store.jdbc.config.JdbcStoreSessionConfig
-import grails.plugin.springsession.store.mongo.config.MongoStoreSessionConfig
-import grails.plugin.springsession.store.mongo.config.MongoStoreSpringDataConfig
-import grails.plugin.springsession.store.redis.config.RedisStoreSessionConfig
 import grails.plugin.webxml.FilterManager
-import grails.util.Environment
-import org.codehaus.groovy.grails.commons.GrailsApplication
 import org.springframework.web.filter.DelegatingFilterProxy
 
 class SpringSessionGrailsPlugin {
-    def version = "1.2.1-BUILD_SNAPSHOT"
+    def version = "1.2.2-RC1"
     def grailsVersion = "2.4 > *"
     def title = "Spring Session Grails Plugin"
     def author = "Jitendra Singh"
@@ -23,6 +15,7 @@ class SpringSessionGrailsPlugin {
     def issueManagement = [url: "https://github.com/jeetmp3/spring-session/issues"]
     def scm = [url: "https://github.com/jeetmp3/spring-session"]
     def loadAfter = ['springSecurityCore', 'cors']
+    def grailsApplication
 
     def getWebXmlFilterOrder() {
         FilterManager filterManager = getClass().getClassLoader().loadClass('grails.plugin.webxml.FilterManager')
@@ -70,45 +63,8 @@ class SpringSessionGrailsPlugin {
     }
 
     def doWithSpring = {
-        println "\n++++++ Configuring Spring session"
-        mergeConfig(application)
-
         ConfigObject config = application.config.springsession
-        SessionStore sessionStore = config.sessionStore ?: SessionStore.REDIS
-
-        if(config.websocket.stompEndpoints || config.websocket.appDestinationPrefix || config.websocket.simpleBrokers) {
-            webSocketSessionConfig(WebSocketSessionConfig, config)
-        }
-
-        springSessionConfig(SpringSessionConfig, config) {}
-
-        switch (sessionStore) {
-            case SessionStore.JDBC:
-                sessionStoreConfiguration(JdbcStoreSessionConfig, ref("grailsApplication"), config)
-                break;
-            case SessionStore.MONGO:
-                mongoSpringDataConfig(MongoStoreSpringDataConfig, config)
-                sessionStoreConfiguration(MongoStoreSessionConfig, ref("grailsApplication"), config)
-                break;
-            case SessionStore.HAZELCAST:
-                sessionStoreConfiguration(HazelcastStoreSessionConfig, ref("grailsApplication"), config)
-                break;
-            default:
-                sessionStoreConfiguration(RedisStoreSessionConfig, ref("grailsApplication"), config)
-                break;
-        }
-
-        println "++++++ Finished Spring Session configuration"
-    }
-
-    def configureRedis = { ConfigObject conf ->
-
-    }
-
-    private void mergeConfig(GrailsApplication grailsApplication) {
-        ConfigSlurper configSlurper = new ConfigSlurper(Environment.current.name)
-        ConfigObject configObject = configSlurper.parse(grailsApplication.classLoader.loadClass("DefaultSessionConfig"))
-        configObject.merge(grailsApplication.config)
-        grailsApplication.config = configObject
+        springSessionConfig(SpringSessionConfig) {}
+        sessionStoreConfiguration(JdbcStoreSessionConfig, ref("grailsApplication"), config)
     }
 }
