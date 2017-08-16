@@ -25,6 +25,7 @@ grails.project.dependency.resolution = {
         compile('org.springframework:spring-messaging:4.0.5.RELEASE')
 
         provided('com.h2database:h2:1.4.191')
+        runtime ('mysql:mysql-connector-java:5.1.29')
     }
 
     plugins {
