@@ -1,8 +1,8 @@
 package spring.session.demo.app
 
-import grails.test.mixin.integration.Integration
-
 import geb.spock.*
+import grails.testing.mixin.integration.Integration
+import spock.lang.Ignore
 
 /**
  * See http://www.gebish.org/manual/current/ for more instructions

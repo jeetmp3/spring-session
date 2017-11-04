@@ -1,27 +1,23 @@
 import grails.plugins.Plugin
 import groovy.util.logging.Slf4j
-import org.grails.plugins.springsession.converters.GrailsJdkSerializationRedisSerializer
+import org.grails.plugins.springsession.config.SpringSessionConfig
 import org.grails.plugins.springsession.data.redis.config.MasterNamedNode
 import org.grails.plugins.springsession.data.redis.config.NoOpConfigureRedisAction
 import org.grails.plugins.springsession.web.http.HttpSessionSynchronizer
-import org.grails.plugins.springsession.config.SpringSessionConfig
 import org.springframework.data.redis.connection.RedisNode
 import org.springframework.data.redis.connection.RedisSentinelConfiguration
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory
 import org.springframework.data.redis.core.RedisTemplate
-import org.springframework.data.redis.serializer.StringRedisSerializer
-import org.springframework.session.data.redis.config.annotation.web.http.RedisHttpSessionConfiguration
 import org.springframework.session.web.http.CookieHttpSessionStrategy
 import org.springframework.session.web.http.HeaderHttpSessionStrategy
-import redis.clients.jedis.JedisPoolConfig
 import redis.clients.jedis.JedisShardInfo
 import utils.SpringSessionUtils
 
 @Slf4j
 class SpringSessionGrailsPlugin extends Plugin {
 
-    def version = "2.0.0-SNAPSHOT"
-    def grailsVersion = "3.0.0 > *"
+    def version = "2.0.1-ub"
+    def grailsVersion = "3.3.0 > *"
     def title = "Spring Session Grails Plugin"
     def author = "Jitendra Singh"
     def authorEmail = "jeet.mp3@gmail.com"
@@ -90,7 +86,9 @@ class SpringSessionGrailsPlugin extends Plugin {
                 }
             } else {
                 httpSessionStrategy(CookieHttpSessionStrategy) {
-                    cookieName = conf.strategy.cookie.name
+                    cookieSerializer {
+                        cookieName = conf.strategy.cookie.name
+                    }
                 }
             }
 
