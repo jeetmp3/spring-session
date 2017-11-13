@@ -136,6 +136,7 @@ class SpringSessionGrailsPluginSupport {
 				cookieSerializer(DefaultCookieSerializer) {
 					cookieName = conf.strategy.cookie.name
 					cookiePath = conf.strategy.cookie.path
+					useSecureCookie = conf.strategy.cookie.useSecure
 					domainNamePattern = conf.strategy.cookie.domainNamePattern
 				}
 
