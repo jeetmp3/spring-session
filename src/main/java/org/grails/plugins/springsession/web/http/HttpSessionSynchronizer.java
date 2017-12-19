@@ -31,7 +31,7 @@ public class HttpSessionSynchronizer extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         filterChain.doFilter(request, response);
-        if (persistMutable && request != null && request.getSession() != null) {
+        if (persistMutable && request != null && request.getSession(false) != null) {
             HttpSession session = request.getSession();
             Enumeration<String> attributeNames = session.getAttributeNames();
             while (attributeNames.hasMoreElements()) {
