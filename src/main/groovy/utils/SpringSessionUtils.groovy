@@ -42,7 +42,7 @@ class SpringSessionUtils {
         application.config.springsession = config
         if(!config.active){
             // set the store type to none to disable session auto-configuration
-            PropertySource<Properties> systemProperties = (PropertySource<Properties>) propertySources.get('systemProperties')
+            PropertySource systemProperties = propertySources.get('systemProperties')
             systemProperties.source.put('spring.session.store-type', 'none')
         }
     }

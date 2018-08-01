@@ -36,8 +36,7 @@ class SpringSessionGrailsPlugin extends Plugin {
             ConfigObject conf = SpringSessionUtils.sessionConfig
 
             if (!conf || !conf.active) {
-                String message = 'Spring session is disabled, not loading'
-                log.warn message
+                log.warn 'Spring session is disabled, not loading'
                 return
             }
 
