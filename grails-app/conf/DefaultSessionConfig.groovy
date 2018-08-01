@@ -1,4 +1,5 @@
 springsession {
+    active = true
     maxInactiveIntervalInSeconds = 1800
     redis {
         connectionFactory {
