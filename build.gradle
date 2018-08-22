@@ -9,7 +9,7 @@ buildscript {
 }
 
 version "2.0.1"
-group "com.groggyman.grails"
+group "org.grails.plugins"
 
 apply plugin:"eclipse"
 apply plugin:"idea"
@@ -56,16 +56,30 @@ task wrapper(type: Wrapper) {
     gradleVersion = gradleWrapperVersion
 }
 
-task copyToLocalRepo(type: Copy){
-    def localMaven = new File(System.getProperty('user.home'), '.m2/repository').absolutePath
-    into "$projectDir/repository"
-    from(localMaven) {
-        include "com/groggyman/grails/spring-session/maven-metadata-local.xml"
-        include "com/groggyman/grails/spring-session/${version}/*"
+grailsPublish {
+    // TODO: Provide values here
+    githubSlug = 'jeetmp3/spring-session'
+    license {
+        name = 'Apache-2.0'
+    }
+    title = "Spring Session Grails Plugin"
+    desc = "Provides support for SpringSession project"
+    developers = [jeetmp3:"Jitendra Singh"]
+    portalUser = ""
+    portalPassword = ""
+}
+
+bintray {
+    pkg {
+        name = "$project.name"
+        issueTrackerUrl = "https://github.com/jeetmp3/$project.name/issues"
+        vcsUrl = "https://github.com/jeetmp3/$project.name"
+        version {
+            attributes = ['grails-plugin': "$project.group:$project.name"]
+            name = project.version
+        }
     }
 }
-install.dependsOn(copyToLocalRepo)
-copyToLocalRepo.mustRunAfter(publishToMavenLocal)
 
 test {
     testLogging {
