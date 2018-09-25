@@ -28,7 +28,7 @@ springsession {
 		defaultStrategy = "COOKIE"
 		cookie.name = "SESSION"
 		cookie.path = "/"
-		cookie.domainNamePattern = '^.+?\\.(\\w+\\.[a-z]+)$'
+		cookie.domainNamePattern = /^[\w\-]+\.((?:[a-z]\.?)+)$/
 		httpHeader.headerName = "x-auth-token"
 	}
 	lazy.deserialization = false

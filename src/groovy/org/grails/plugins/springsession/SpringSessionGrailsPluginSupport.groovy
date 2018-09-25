@@ -10,6 +10,8 @@ import org.grails.plugins.springsession.data.redis.RedisSecurityContextRepositor
 import org.grails.plugins.springsession.data.redis.SecurityContextDao
 import org.grails.plugins.springsession.data.redis.config.MasterNamedNode
 import org.grails.plugins.springsession.data.redis.config.NoOpConfigureRedisAction
+import org.grails.plugins.springsession.scope.SpringSessionBeanFactoryPostProcessor
+import org.grails.plugins.springsession.scope.SpringSessionScope
 import org.grails.plugins.springsession.web.http.HttpSessionSynchronizer
 import org.springframework.beans.BeansException
 import org.springframework.context.ApplicationContext
@@ -134,6 +136,7 @@ class SpringSessionGrailsPluginSupport {
 				cookieSerializer(DefaultCookieSerializer) {
 					cookieName = conf.strategy.cookie.name
 					cookiePath = conf.strategy.cookie.path
+					useSecureCookie = conf.strategy.cookie.useSecure
 					domainNamePattern = conf.strategy.cookie.domainNamePattern
 				}
 
@@ -176,6 +179,8 @@ class SpringSessionGrailsPluginSupport {
 					securityContextRepository = ref("redisSecurityContextRepository")
 				}
 			}
+
+			springSessionBeanFactoryPostProcessor(SpringSessionBeanFactoryPostProcessor)
 
 			println "... finished configuring Spring Session"
 		}
