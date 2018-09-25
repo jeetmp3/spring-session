@@ -14,7 +14,6 @@ grails.project.dependency.resolution = {
 		mavenLocal()
 		grailsCentral()
 		mavenCentral()
-		mavenRepo ENV['MVN_REPO_REPOSITORIES_SONATYPE']
 		mavenRepo ENV['MVN_REPO_REPOSITORIES_URL_LIBS']
 		mavenRepo ENV['MVN_REPO_REPOSITORIES_GRAILS_PLUGINS']
 	}
