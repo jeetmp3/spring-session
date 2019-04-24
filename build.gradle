@@ -16,7 +16,7 @@ buildscript {
 		}
 	}
 	dependencies {
-		classpath group: 'gradle-release', name: 'gradle-release', version: '1.5.2'
+		classpath 'gradle-release:gradle-release:1.7.1'
 	}
 }
 
