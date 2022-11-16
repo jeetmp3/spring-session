@@ -9,7 +9,7 @@ buildscript {
 }
 
 version "2.0.1"
-group "org.grails.plugins"
+group "com.groggyman.grails"
 
 apply plugin:"eclipse"
 apply plugin:"idea"
@@ -69,17 +69,16 @@ grailsPublish {
     portalPassword = ""
 }
 
-bintray {
-    pkg {
-        name = "$project.name"
-        issueTrackerUrl = "https://github.com/jeetmp3/$project.name/issues"
-        vcsUrl = "https://github.com/jeetmp3/$project.name"
-        version {
-            attributes = ['grails-plugin': "$project.group:$project.name"]
-            name = project.version
-        }
+task copyToLocalRepo(type: Copy){
+    def localMaven = new File(System.getProperty('user.home'), '.m2/repository').absolutePath
+    into "$projectDir/repository"
+    from(localMaven) {
+        include "com/groggyman/grails/spring-session/maven-metadata-local.xml"
+        include "com/groggyman/grails/spring-session/${version}/*"
     }
 }
+install.dependsOn(copyToLocalRepo)
+copyToLocalRepo.mustRunAfter(publishToMavenLocal)
 
 test {
     testLogging {
