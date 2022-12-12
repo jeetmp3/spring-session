@@ -4,7 +4,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.session.web.http.SessionRepositoryFilter;
 import org.springframework.util.Assert;
 import org.springframework.web.filter.OncePerRequestFilter;
-
+import org.grails.plugins.springsession.web.http.SpringSessionConfigProperties;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +20,15 @@ import java.util.Enumeration;
 public class HttpSessionSynchronizer extends OncePerRequestFilter {
 
     private Boolean persistMutable;
+    SpringSessionConfigProperties springSessionConfigProperties = new SpringSessionConfigProperties();
+
+    private Boolean getPersistMutable(){
+        return springSessionConfigProperties.allowPersistMutable;
+    }
+
+    HttpSessionSynchronizer(SpringSessionConfigProperties springSessionConfigProperties){
+        this.springSessionConfigProperties = springSessionConfigProperties;
+    }
 
 
     @Override
